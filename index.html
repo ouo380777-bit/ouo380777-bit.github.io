@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWESUNG快速问答</title>
+    <!-- 外部资源引入 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Tailwind 配置 -->
     <script>
         tailwind.config = {
             theme: {
@@ -29,10 +31,16 @@
         }
     </script>
     
+    <!-- 自定义样式 -->
     <style type="text/tailwindcss">
         @layer utilities {
-            .answer-fade { animation: fadeIn 0.3s ease-in-out; }
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            .answer-fade { 
+                animation: fadeIn 0.3s ease-in-out; 
+            }
+            @keyframes fadeIn { 
+                from { opacity: 0; transform: translateY(10px); } 
+                to { opacity: 1; transform: translateY(0); } 
+            }
             .super-round-title { 
                 font-weight: 900; 
                 color: #FF6B9D;
@@ -51,26 +59,26 @@
 
 <body class="bg-gray-50 min-h-screen">
     <div class="container mx-auto px-4 py-10 max-w-3xl">
+        <!-- 页面标题 -->
         <header class="text-center mb-12">
-            <!-- AWESUNG 保持原有字体样式 -->
             <h1 class="super-round-title text-[clamp(2.5rem,8vw,3.5rem)] mb-4">AWESUNG</h1>
             <p class="body-text text-gray-500 text-lg">点击问题，快速获取答案（含附件下载）</p>
         </header>
 
-        <!-- 答案显示区 -->
+        <!-- 答案显示区域 -->
         <div id="answerContainer" class="bg-white rounded-xl shadow-soft p-6 mb-8 hidden answer-fade">
             <h2 class="text-xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
                 <i class="fa fa-comment-o text-primary text-xl"></i>
                 <span id="answerTitle" class="body-text">点击问题查看答案</span>
             </h2>
             <div class="relative">
-                <!-- 移除复制按钮区域 -->
                 <div id="answerContent" class="body-text text-gray-600 pl-2 border-l-4 border-primary/20 p-3 rounded-r-lg whitespace-pre-line"></div>
+                <!-- 附件容器 -->
                 <div id="attachmentsContainer" class="mt-4 pl-4"></div>
             </div>
         </div>
 
-        <!-- 问题清单 -->
+        <!-- 问题列表区域 -->
         <div class="bg-white rounded-xl shadow-soft p-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
                 <i class="fa fa-list-ul text-primary text-xl"></i>
@@ -79,13 +87,14 @@
             <ul id="questionsList" class="space-y-3 text-gray-700"></ul>
         </div>
 
+        <!-- 页脚 -->
         <footer class="mt-12 text-center text-gray-500 text-sm">
             <p class="body-text">© 2025 AWESUNG. 保留所有权利。</p>
         </footer>
     </div>
 
     <script>
-        // 问答数据
+        // 问答数据（可根据需要修改）
         const qaData = [
             {
                 question: "如何创建打单账号？",
@@ -119,7 +128,7 @@
             }
         ];
 
-        // DOM元素
+        // DOM元素获取
         const answerContainer = document.getElementById('answerContainer');
         const answerTitle = document.getElementById('answerTitle');
         const answerContent = document.getElementById('answerContent');
@@ -135,6 +144,7 @@
                     <span class="bg-primary/10 text-primary font-medium w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm">${index + 1}</span>
                     <span class="body-text text-sm text-gray-700 flex-1">${item.question}</span>
                 `;
+                // 点击问题显示答案
                 li.addEventListener('click', () => showAnswer(index, item.question));
                 questionsList.appendChild(li);
             });
@@ -147,6 +157,7 @@
             answerContent.innerHTML = item.answer.replace(/\n/g, '<br>');
             attachmentsContainer.innerHTML = '';
             
+            // 处理附件显示
             if (item.attachments.length) {
                 item.attachments.forEach(attach => {
                     const a = document.createElement('a');
@@ -156,10 +167,16 @@
                     a.innerHTML = `<i class="fa fa-download text-primary"></i> 下载附件：${attach.name}`;
                     attachmentsContainer.appendChild(a);
                 });
+            } else {
+                attachmentsContainer.innerHTML = '<p class="text-gray-400 text-sm">无附件</p>';
             }
 
+            // 显示答案区域并平滑滚动
             answerContainer.classList.remove('hidden');
             answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // 重新触发动画
+            answerContainer.classList.remove('answer-fade');
+            setTimeout(() => answerContainer.classList.add('answer-fade'), 10);
         }
     </script>
 </body>
