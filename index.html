@@ -53,6 +53,14 @@
                 line-height: 1.85; 
                 letter-spacing: 0.03em; 
             }
+            /* 客服按钮固定样式 */
+            .fixed-contact-btn {
+                position: fixed;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 40;
+            }
         }
     </style>
 </head>
@@ -91,6 +99,43 @@
         <footer class="mt-12 text-center text-gray-500 text-sm">
             <p class="body-text">© 2025 AWESUNG. 保留所有权利。</p>
         </footer>
+    </div>
+
+    <!-- 右侧固定联系客服按钮 -->
+    <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg shadow-soft transition-all flex items-center gap-2">
+        <i class="fa fa-headphones"></i> 联系客服
+    </button>
+
+    <!-- 客服弹窗（表单提交至指定邮箱） -->
+    <div id="contactModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa fa-comments text-primary"></i> 联系人工客服
+            </h3>
+            <!-- 表单使用formspree对接邮箱（无需后端） -->
+            <form id="contactForm" action="https://formspree.io/f/mqaznyzw" method="POST" class="space-y-4">
+                <!-- 隐藏字段：指定接收邮箱（已绑定ouo380777@gmail.com） -->
+                <input type="hidden" name="_to" value="ouo380777@gmail.com">
+                <input type="hidden" name="_subject" value="AWESUNG客服咨询">
+                
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的姓名</label>
+                    <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的邮箱（便于回复）</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">咨询内容</label>
+                    <textarea name="message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="3" required></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" id="closeModal" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">取消</button>
+                    <button type="submit" class="flex-1 bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90 transition-all">提交咨询</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -134,6 +179,10 @@
         const answerContent = document.getElementById('answerContent');
         const attachmentsContainer = document.getElementById('attachmentsContainer');
         const questionsList = document.getElementById('questionsList');
+        const contactBtn = document.getElementById('contactBtn');
+        const contactModal = document.getElementById('contactModal');
+        const closeModal = document.getElementById('closeModal');
+        const contactForm = document.getElementById('contactForm');
 
         // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
@@ -178,6 +227,53 @@
             answerContainer.classList.remove('answer-fade');
             setTimeout(() => answerContainer.classList.add('answer-fade'), 10);
         }
+
+        // 客服弹窗控制逻辑
+        contactBtn.addEventListener('click', () => {
+            contactModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', () => {
+            contactModal.classList.add('hidden');
+        });
+
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) {
+                contactModal.classList.add('hidden');
+            }
+        });
+
+        // 表单提交成功后的处理
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '提交中...';
+
+            try {
+                const formData = new FormData(contactForm);
+                const response = await fetch(contactForm.action, {
+                    method: contactForm.method,
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('咨询已提交！客服将通过邮箱尽快联系您~');
+                    contactForm.reset();
+                    contactModal.classList.add('hidden');
+                } else {
+                    alert('提交失败，请稍后重试！');
+                }
+            } catch (error) {
+                alert('网络异常，请检查网络后重试！');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交咨询';
+            }
+        });
     </script>
 </body>
 </html>
