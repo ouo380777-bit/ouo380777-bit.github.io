@@ -61,12 +61,13 @@
                 transform: translateY(-50%);
                 z-index: 40;
             }
-            /* 适配腾讯文档表单高度 */
-            .tencent-form-iframe {
-                min-height: 450px;
+            /* 麦客表单iframe样式优化 */
+            .mike-form-iframe {
+                min-height: 500px;
                 width: 100%;
                 border: none;
                 border-radius: 8px;
+                overflow: hidden;
             }
         }
     </style>
@@ -113,17 +114,25 @@
         <i class="fa fa-headphones"></i> 联系客服
     </button>
 
-    <!-- 客服弹窗（替换为腾讯文档表单） -->
+    <!-- 客服弹窗（麦客表单优化版） -->
     <div id="contactModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fa fa-comments text-primary"></i> 联系人工客服
-            </h3>
-            <!-- 嵌入腾讯文档表单（已替换你的链接） -->
-            <div class="rounded-lg overflow-hidden border border-gray-100">
-                <iframe class="tencent-form-iframe" src="http://uleveqvecc6sgadw.mikecrm.com/cOxJCwL"></iframe>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                    <i class="fa fa-comments text-primary"></i> 联系人工客服
+                </h3>
+                <button type="button" id="closeModalQuick" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa fa-times text-lg"></i>
+                </button>
             </div>
-            <!-- 关闭按钮 -->
+            <!-- 麦客表单iframe（添加防跨域属性） -->
+            <div class="rounded-lg overflow-hidden border border-gray-100">
+                <iframe class="mike-form-iframe" 
+                        src="https://uleveqvecc6sgadw.mikecrm.com/cOxJCwL" 
+                        sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
+                        allowfullscreen></iframe>
+            </div>
+            <!-- 底部关闭按钮（备用） -->
             <button type="button" id="closeModal" class="w-full mt-4 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">关闭窗口</button>
         </div>
     </div>
@@ -172,6 +181,7 @@
         const contactBtn = document.getElementById('contactBtn');
         const contactModal = document.getElementById('contactModal');
         const closeModal = document.getElementById('closeModal');
+        const closeModalQuick = document.getElementById('closeModalQuick');
 
         // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
@@ -223,10 +233,16 @@
         contactBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             contactModal.classList.remove('hidden');
+            // 刷新iframe确保内容加载
+            const iframe = document.querySelector('.mike-form-iframe');
+            iframe.src = iframe.src;
         });
 
-        closeModal.addEventListener('click', () => {
-            contactModal.classList.add('hidden');
+        // 多个关闭按钮绑定事件
+        [closeModal, closeModalQuick].forEach(btn => {
+            btn.addEventListener('click', () => {
+                contactModal.classList.add('hidden');
+            });
         });
 
         contactModal.addEventListener('click', (e) => {
@@ -235,11 +251,16 @@
             }
         });
 
-        // 阻止表单弹窗内的事件冒泡
-        document.querySelector('.tencent-form-iframe').addEventListener('load', function() {
-            this.contentDocument.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
+        // 阻止iframe内部点击事件冒泡
+        const iframe = document.querySelector('.mike-form-iframe');
+        iframe.addEventListener('load', function() {
+            try {
+                this.contentDocument.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            } catch (e) {
+                // 跨域时无法访问contentDocument，忽略即可
+            }
         });
     </script>
 </body>
