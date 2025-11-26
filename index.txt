@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWESUNG快速问答</title>
+    <!-- 外部资源引入（确保CDN可用，替换不稳定链接） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B9D',
+                        secondary: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        comic: ['Comic Neue', 'sans-serif'],
+                        inter: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 12px rgba(0,0,0,0.05)',
+                        'hover': '0 6px 16px rgba(255,107,157,0.15)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .answer-fade { 
+                animation: fadeIn 0.3s ease-in-out; 
+            }
+            @keyframes fadeIn { 
+                from { opacity: 0; transform: translateY(10px); } 
+                to { opacity: 1; transform: translateY(0); } 
+            }
+            .super-round-title { 
+                font-weight: 900; 
+                color: #FF6B9D;
+                text-shadow: 2px 2px 0 rgba(255,255,255,0.9), 3px 3px 0 rgba(255,107,157,0.1);
+                letter-spacing: 0.08em;
+            }
+            .body-text { 
+                font-family: 'Inter', sans-serif;
+                font-size: 0.95rem; 
+                line-height: 1.85; 
+                letter-spacing: 0.03em; 
+            }
+            /* 客服按钮固定样式 */
+            .fixed-contact-btn {
+                position: fixed;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 40;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-10 max-w-3xl">
+        <!-- 页面标题 -->
+        <header class="text-center mb-12">
+            <h1 class="super-round-title text-[clamp(2.5rem,8vw,3.5rem)] mb-4">AWESUNG</h1>
+            <p class="body-text text-gray-500 text-lg">点击问题，快速获取答案（含附件下载）</p>
+        </header>
+
+        <!-- 答案显示区域 -->
+        <div id="answerContainer" class="bg-white rounded-xl shadow-soft p-6 mb-8 hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
+                <i class="fa fa-comment-o text-primary text-xl"></i>
+                <span id="answerTitle" class="body-text">点击问题查看答案</span>
+            </h2>
+            <div class="relative">
+                <div id="answerContent" class="body-text text-gray-600 pl-2 border-l-4 border-primary/20 p-3 rounded-r-lg"></div>
+                <!-- 附件容器 -->
+                <div id="attachmentsContainer" class="mt-4 pl-4"></div>
+            </div>
+        </div>
+
+        <!-- 问题列表区域 -->
+        <div class="bg-white rounded-xl shadow-soft p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
+                <i class="fa fa-list-ul text-primary text-xl"></i>
+                <span class="body-text">问题清单（点击查看答案）</span>
+            </h2>
+            <ul id="questionsList" class="space-y-3 text-gray-700"></ul>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p class="body-text">© 2025 AWESUNG. 保留所有权利。</p>
+        </footer>
+    </div>
+
+    <!-- 右侧固定联系客服按钮 -->
+    <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg shadow-soft transition-all flex items-center gap-2">
+        <i class="fa fa-headphones"></i> 联系客服
+    </button>
+
+    <!-- 客服弹窗（免注册表单提交至指定邮箱） -->
+    <div id="contactModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa fa-comments text-primary"></i> 联系人工客服
+            </h3>
+            <!-- 免注册表单提交（修复Formspree配置） -->
+            <form id="contactForm" action="https://formspree.io/f/xjvqkjjb" method="POST" class="space-y-4">
+                <!-- Formspree 必要配置（移除无效隐藏字段） -->
+                <input type="hidden" name="_subject" value="AWESUNG客服咨询">
+                
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的姓名</label>
+                    <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的邮箱（便于回复）</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">咨询内容</label>
+                    <textarea name="message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="3" required></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" id="closeModal" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">取消</button>
+                    <button type="submit" class="flex-1 bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90 transition-all">提交咨询</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 问答数据（可根据需要修改）
+        const qaData = [
+            {
+                question: "如何创建打单账号？",
+                answer:`请提供贵司的开户资料，包括：
+1. 开户手机号
+2. 营业执照副本
+我们将为您创建专属的打单账号。`,
+                attachments: [
+                    { name: "客户开户及联系登记表2025.xls", url: "attachments/customer_registration_2025.xls" }
+                ]
+            },
+            {
+                question: "介绍一下你们公司的业务？",
+                answer: "我们欧洲业务部门开辟了多项优势渠道，涵盖清关，转运，一件代发，账号等业务服务，包括DHL,CTT等优惠的尾程价格账号。",
+                attachments: [
+                    { name: "AWESUNG业务介绍手册.pdf", url: "attachments/AWESUNG业务介绍手册.pdf" },
+                    { name: "欧洲渠道价格表.xlsx", url: "attachments/欧洲渠道价格表.xlsx" }
+                ]
+            },
+            {
+                question: "财务结算模式是怎么样？可否月结？",
+                answer: "您的意向合作业务是什么呢？账号业务需要预充值，我们的欧元收款账号是：XXX；人民币收款账号是：XXX；请在完成打款之后发送水单给我们业务负责人，我们会尽快给您开放打单额度。",
+                attachments: [
+                    { name: "收款银行账号.pdf", url: "attachments/收款银行账号.pdf" }
+                ]
+            },
+            {
+                question: "AAA",
+                answer: "a。",
+                attachments: []
+            }
+        ];
+
+        // DOM元素获取
+        const answerContainer = document.getElementById('answerContainer');
+        const answerTitle = document.getElementById('answerTitle');
+        const answerContent = document.getElementById('answerContent');
+        const attachmentsContainer = document.getElementById('attachmentsContainer');
+        const questionsList = document.getElementById('questionsList');
+        const contactBtn = document.getElementById('contactBtn');
+        const contactModal = document.getElementById('contactModal');
+        const closeModal = document.getElementById('closeModal');
+        const contactForm = document.getElementById('contactForm');
+
+        // 初始化问题列表
+        document.addEventListener('DOMContentLoaded', () => {
+            qaData.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center gap-3 p-3 bg-secondary rounded-lg hover:bg-pink-50 cursor-pointer transition-all';
+                li.innerHTML = `
+                    <span class="bg-primary/10 text-primary font-medium w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm">${index + 1}</span>
+                    <span class="body-text text-sm text-gray-700 flex-1">${item.question}</span>
+                `;
+                // 点击问题显示答案
+                li.addEventListener('click', () => showAnswer(index, item.question));
+                questionsList.appendChild(li);
+            });
+        });
+
+        // 显示答案与附件（修复动画触发和换行逻辑）
+        function showAnswer(index, questionText) {
+            const item = qaData[index];
+            answerTitle.textContent = questionText;
+            // 修复换行：用<br>替换\n，移除多余空格
+            answerContent.innerHTML = item.answer.replace(/\n/g, '<br>').replace(/\s{2,}/g, ' ');
+            attachmentsContainer.innerHTML = '';
+            
+            // 处理附件显示
+            if (item.attachments.length) {
+                item.attachments.forEach(attach => {
+                    const a = document.createElement('a');
+                    a.href = attach.url;
+                    a.download = attach.name;
+                    a.className = 'inline-flex items-center gap-1 bg-secondary hover:bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-sm transition-all mr-3 mb-2';
+                    a.innerHTML = `<i class="fa fa-download text-primary"></i> 下载附件：${attach.name}`;
+                    attachmentsContainer.appendChild(a);
+                });
+            } else {
+                attachmentsContainer.innerHTML = '<p class="text-gray-400 text-sm">无附件</p>';
+            }
+
+            // 显示答案区域并平滑滚动
+            answerContainer.classList.remove('hidden');
+            // 修复动画：先移除类再添加，确保每次点击都触发
+            setTimeout(() => {
+                answerContainer.classList.add('answer-fade');
+            }, 10);
+            answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // 客服弹窗控制逻辑（修复事件冒泡）
+        contactBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            contactModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', () => {
+            contactModal.classList.add('hidden');
+        });
+
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) {
+                contactModal.classList.add('hidden');
+            }
+        });
+
+        // 表单提交成功后的处理（优化错误提示）
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '提交中...';
+
+            try {
+                const formData = new FormData(contactForm);
+                const response = await fetch(contactForm.action, {
+                    method: contactForm.method,
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('咨询已提交！客服将通过邮箱尽快联系您~');
+                    contactForm.reset();
+                    contactModal.classList.add('hidden');
+                } else {
+                    const error = await response.json();
+                    alert(`提交失败：${error.message || '请稍后重试'}`);
+                }
+            } catch (error) {
+                alert('网络异常，请检查网络连接后重试！');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交咨询';
+            }
+        });
+    </script>
+</body>
+</html>
