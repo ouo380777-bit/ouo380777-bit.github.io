@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWESUNG快速问答</title>
-    <!-- 外部资源引入（国内稳定CDN） -->
+    <!-- 外部资源引入 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- 引入麦客表单弹窗JS -->
-    <script src="https://cdn.mikecrm.com/mc_form/js/jquery-1.10.2.min.js"></script>
-    <script src="https://cdn.mikecrm.com/mc_form/js/mc_form.js"></script>
     
     <!-- Tailwind 配置 -->
     <script>
@@ -56,7 +53,6 @@
                 line-height: 1.85; 
                 letter-spacing: 0.03em; 
             }
-            /* 客服按钮固定样式 */
             .fixed-contact-btn {
                 position: fixed;
                 right: 20px;
@@ -104,35 +100,49 @@
         </footer>
     </div>
 
-    <!-- 右侧固定联系客服按钮（调用麦客弹窗） -->
-    <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg shadow-soft transition-all flex items-center gap-2" onclick="openMikeForm()">
+    <!-- 右侧固定联系客服按钮 -->
+    <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg shadow-soft transition-all flex items-center gap-2">
         <i class="fa fa-headphones"></i> 联系客服
     </button>
 
-    <!-- 麦客表单容器（隐藏） -->
-    <div id="mikeFormContainer" style="display:none;"></div>
+    <!-- 客服弹窗（纯前端本地表单） -->
+    <div id="contactModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                    <i class="fa fa-comments text-primary"></i> 联系人工客服
+                </h3>
+                <button type="button" id="closeModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- 表单 -->
+            <form id="contactForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的姓名 *</label>
+                    <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的邮箱 *</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">咨询内容 *</label>
+                    <textarea name="message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90 transition-all">提交咨询</button>
+            </form>
+        </div>
+    </div>
 
+    <!-- 免费邮件通知服务 -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
-        // 初始化麦客表单弹窗
-        function openMikeForm() {
-            var mcForm = new MikeCrmForm();
-            mcForm.init({
-                formId: 'cOxJCwL', // 你的麦客表单ID
-                name: 'AWESUNG客服咨询',
-                width: 500,
-                height: 600,
-                container: 'mikeFormContainer',
-                success: function() {
-                    alert('提交成功！我们会尽快联系您。');
-                },
-                error: function() {
-                    alert('提交失败，请稍后重试！');
-                }
-            });
-            mcForm.show();
-        }
+        // 初始化EmailJS（替换为你的配置）
+        emailjs.init("K870xK5X5y78Z1qW2"); // 示例公钥，替换为你的
 
-        // 问答数据（可根据需要修改）
+        // 问答数据
         const qaData = [
             {
                 question: "如何创建打单账号？",
@@ -166,12 +176,16 @@
             }
         ];
 
-        // DOM元素获取
+        // DOM元素
         const answerContainer = document.getElementById('answerContainer');
         const answerTitle = document.getElementById('answerTitle');
         const answerContent = document.getElementById('answerContent');
         const attachmentsContainer = document.getElementById('attachmentsContainer');
         const questionsList = document.getElementById('questionsList');
+        const contactBtn = document.getElementById('contactBtn');
+        const contactModal = document.getElementById('contactModal');
+        const closeModal = document.getElementById('closeModal');
+        const contactForm = document.getElementById('contactForm');
 
         // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
@@ -182,21 +196,18 @@
                     <span class="bg-primary/10 text-primary font-medium w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm">${index + 1}</span>
                     <span class="body-text text-sm text-gray-700 flex-1">${item.question}</span>
                 `;
-                // 点击问题显示答案
                 li.addEventListener('click', () => showAnswer(index, item.question));
                 questionsList.appendChild(li);
             });
         });
 
-        // 显示答案与附件（修复动画触发和换行逻辑）
+        // 显示答案
         function showAnswer(index, questionText) {
             const item = qaData[index];
             answerTitle.textContent = questionText;
-            // 修复换行：用<br>替换\n，移除多余空格
             answerContent.innerHTML = item.answer.replace(/\n/g, '<br>').replace(/\s{2,}/g, ' ');
             attachmentsContainer.innerHTML = '';
             
-            // 处理附件显示
             if (item.attachments.length) {
                 item.attachments.forEach(attach => {
                     const a = document.createElement('a');
@@ -210,14 +221,54 @@
                 attachmentsContainer.innerHTML = '<p class="text-gray-400 text-sm">无附件</p>';
             }
 
-            // 显示答案区域并平滑滚动
             answerContainer.classList.remove('hidden');
-            // 修复动画：先移除类再添加，确保每次点击都触发
             setTimeout(() => {
                 answerContainer.classList.add('answer-fade');
             }, 10);
             answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+
+        // 弹窗控制
+        contactBtn.addEventListener('click', () => {
+            contactModal.classList.remove('hidden');
+        });
+        closeModal.addEventListener('click', () => {
+            contactModal.classList.add('hidden');
+        });
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) contactModal.classList.add('hidden');
+        });
+
+        // 表单提交（发送到你的邮箱）
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.submitter;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '提交中...';
+
+            try {
+                // 发送邮件
+                await emailjs.send(
+                    "service_123456", // 你的服务ID
+                    "template_789012", // 你的模板ID
+                    {
+                        name: contactForm.name.value,
+                        email: contactForm.email.value,
+                        message: contactForm.message.value,
+                        to_email: "ouo380777@gmail.com" // 你的邮箱
+                    }
+                );
+                alert('提交成功！我们会尽快联系您。');
+                contactForm.reset();
+                contactModal.classList.add('hidden');
+            } catch (error) {
+                alert('提交失败，请稍后重试！');
+                console.error(error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交咨询';
+            }
+        });
     </script>
 </body>
 </html>
