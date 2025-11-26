@@ -61,14 +61,6 @@
                 transform: translateY(-50%);
                 z-index: 40;
             }
-            /* 麦客表单iframe样式优化 */
-            .mike-form-iframe {
-                min-height: 500px;
-                width: 100%;
-                border: none;
-                border-radius: 8px;
-                overflow: hidden;
-            }
         }
     </style>
 </head>
@@ -114,7 +106,7 @@
         <i class="fa fa-headphones"></i> 联系客服
     </button>
 
-    <!-- 客服弹窗（麦客表单优化版） -->
+    <!-- 客服弹窗（纯本地表单，无iframe） -->
     <div id="contactModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
             <div class="flex justify-between items-center mb-4">
@@ -125,15 +117,26 @@
                     <i class="fa fa-times text-lg"></i>
                 </button>
             </div>
-            <!-- 麦客表单iframe（添加防跨域属性） -->
-            <div class="rounded-lg overflow-hidden border border-gray-100">
-                <iframe class="mike-form-iframe" 
-                        src="https://uleveqvecc6sgadw.mikecrm.com/cOxJCwL" 
-                        sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
-                        allowfullscreen></iframe>
-            </div>
-            <!-- 底部关闭按钮（备用） -->
-            <button type="button" id="closeModal" class="w-full mt-4 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">关闭窗口</button>
+            
+            <!-- 纯本地表单 -->
+            <form id="contactForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的姓名 *</label>
+                    <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">您的邮箱 *</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">咨询内容 *</label>
+                    <textarea name="message" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary" rows="4" required></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" id="closeModal" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">取消</button>
+                    <button type="submit" class="flex-1 bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90 transition-all">提交咨询</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -182,6 +185,7 @@
         const contactModal = document.getElementById('contactModal');
         const closeModal = document.getElementById('closeModal');
         const closeModalQuick = document.getElementById('closeModalQuick');
+        const contactForm = document.getElementById('contactForm');
 
         // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
@@ -229,16 +233,13 @@
             answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // 客服弹窗控制逻辑（优化交互）
+        // 客服弹窗控制逻辑
         contactBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             contactModal.classList.remove('hidden');
-            // 刷新iframe确保内容加载
-            const iframe = document.querySelector('.mike-form-iframe');
-            iframe.src = iframe.src;
         });
 
-        // 多个关闭按钮绑定事件
+        // 关闭弹窗
         [closeModal, closeModalQuick].forEach(btn => {
             btn.addEventListener('click', () => {
                 contactModal.classList.add('hidden');
@@ -251,16 +252,23 @@
             }
         });
 
-        // 阻止iframe内部点击事件冒泡
-        const iframe = document.querySelector('.mike-form-iframe');
-        iframe.addEventListener('load', function() {
-            try {
-                this.contentDocument.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            } catch (e) {
-                // 跨域时无法访问contentDocument，忽略即可
-            }
+        // 表单提交处理
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const formData = new FormData(contactForm);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const message = formData.get('message');
+
+            // 这里可以添加表单提交逻辑（比如发送到你的邮箱）
+            // 暂时先做提示，后续可对接EmailJS等服务
+            alert(`感谢您的咨询，${name}！我们会尽快通过${email}与您联系。`);
+            
+            // 重置表单并关闭弹窗
+            contactForm.reset();
+            contactModal.classList.add('hidden');
         });
     </script>
 </body>
