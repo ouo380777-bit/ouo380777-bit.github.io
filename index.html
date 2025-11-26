@@ -139,8 +139,8 @@
     <!-- 免费邮件通知服务 -->
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
-        // 初始化EmailJS（替换为你的配置）
-        emailjs.init("K870xK5X5y78Z1qW2"); // 示例公钥，替换为你的
+        // 初始化EmailJS（替换为你的公钥）
+        emailjs.init("你的Public Key"); // 这里替换成你EmailJS的公钥
 
         // 问答数据
         const qaData = [
@@ -247,15 +247,15 @@
             submitBtn.textContent = '提交中...';
 
             try {
-                // 发送邮件
+                // 发送邮件（替换为你的服务ID和模板ID）
                 await emailjs.send(
-                    "service_123456", // 你的服务ID
-                    "template_789012", // 你的模板ID
+                    "service_zyx", // 你的Service ID
+                    "你的Template ID", // 你的Template ID
                     {
                         name: contactForm.name.value,
                         email: contactForm.email.value,
                         message: contactForm.message.value,
-                        to_email: "ouo380777@gmail.com" // 你的邮箱
+                        to_email: "ouo380777@gmail.com" // 你的接收邮箱
                     }
                 );
                 alert('提交成功！我们会尽快联系您。');
