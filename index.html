@@ -133,15 +133,19 @@
                 </div>
                 <button type="submit" class="w-full bg-primary text-white px-3 py-2 rounded-lg hover:bg-primary/90 transition-all">提交咨询</button>
             </form>
+
+            <!-- 复制内容区域（默认隐藏） -->
+            <div id="copyArea" class="hidden mt-4 p-4 bg-gray-50 rounded-lg">
+                <h4 class="font-medium text-gray-800 mb-2">请复制以下内容发送到我们的邮箱：ouo380777@gmail.com</h4>
+                <div id="formContent" class="text-sm text-gray-700 p-2 bg-white border border-gray-200 rounded-lg mb-2 break-words"></div>
+                <button id="copyBtn" class="w-full text-primary border border-primary px-3 py-2 rounded-lg hover:bg-primary/5 transition-all">
+                    <i class="fa fa-copy mr-2"></i>复制内容
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- 免费邮件通知服务 -->
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
-        // 初始化EmailJS（替换为你的公钥）
-        emailjs.init("你的Public Key"); // 这里替换成你EmailJS的公钥
-
         // 问答数据
         const qaData = [
             {
@@ -186,6 +190,9 @@
         const contactModal = document.getElementById('contactModal');
         const closeModal = document.getElementById('closeModal');
         const contactForm = document.getElementById('contactForm');
+        const copyArea = document.getElementById('copyArea');
+        const formContent = document.getElementById('formContent');
+        const copyBtn = document.getElementById('copyBtn');
 
         // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
@@ -231,6 +238,8 @@
         // 弹窗控制
         contactBtn.addEventListener('click', () => {
             contactModal.classList.remove('hidden');
+            contactForm.classList.remove('hidden');
+            copyArea.classList.add('hidden');
         });
         closeModal.addEventListener('click', () => {
             contactModal.classList.add('hidden');
@@ -239,35 +248,29 @@
             if (e.target === contactModal) contactModal.classList.add('hidden');
         });
 
-        // 表单提交（发送到你的邮箱）
-        contactForm.addEventListener('submit', async (e) => {
+        // 表单提交（生成可复制的内容）
+        contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const submitBtn = e.submitter;
-            submitBtn.disabled = true;
-            submitBtn.textContent = '提交中...';
+            // 生成表单内容
+            const content = `
+姓名：${contactForm.name.value}
+邮箱：${contactForm.email.value}
+咨询内容：${contactForm.message.value}
+            `.trim();
+            formContent.textContent = content;
+            // 显示复制区域
+            contactForm.classList.add('hidden');
+            copyArea.classList.remove('hidden');
+        });
 
-            try {
-                // 发送邮件（替换为你的服务ID和模板ID）
-                await emailjs.send(
-                    "service_zyx", // 你的Service ID
-                    "你的Template ID", // 你的Template ID
-                    {
-                        name: contactForm.name.value,
-                        email: contactForm.email.value,
-                        message: contactForm.message.value,
-                        to_email: "ouo380777@gmail.com" // 你的接收邮箱
-                    }
-                );
-                alert('提交成功！我们会尽快联系您。');
-                contactForm.reset();
-                contactModal.classList.add('hidden');
-            } catch (error) {
-                alert('提交失败，请稍后重试！');
-                console.error(error);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '提交咨询';
-            }
+        // 复制内容到剪贴板
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(formContent.textContent).then(() => {
+                copyBtn.innerHTML = '<i class="fa fa-check mr-2"></i>已复制';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fa fa-copy mr-2"></i>复制内容';
+                }, 2000);
+            });
         });
     </script>
 </body>
