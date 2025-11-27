@@ -62,16 +62,16 @@
                 line-height: 1.85; 
                 letter-spacing: 0.03em; 
             }
-            /* 修改：竖排按钮样式 */
+            /* 仅修改这里：竖排联系客服按钮样式 */
             .fixed-contact-btn {
                 position: fixed;
-                right: 10px; /* 缩小右侧间距，适配竖排 */
+                right: 20px;
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 40;
-                writing-mode: vertical-rl; /* 文字竖排（从右到左） */
-                text-orientation: upright; /* 文字垂直排列（不旋转） */
-                padding: 12px 6px; /* 调整内边距，适配竖排 */
+                writing-mode: vertical-rl; /* 文字竖排 */
+                text-orientation: upright; /* 文字垂直排列 */
+                padding: 12px 8px; /* 适配竖排的内边距 */
                 white-space: nowrap; /* 防止文字换行 */
             }
         }
@@ -114,8 +114,8 @@
         </footer>
     </div>
 
-    <!-- 右侧固定联系客服按钮（已改为竖排） -->
-    <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white rounded-lg shadow-soft transition-all flex items-center gap-2">
+    <!-- 右侧固定联系客服按钮（仅竖排修改） -->
+    <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg shadow-soft transition-all flex items-center gap-2">
         <i class="fa fa-headphones"></i> 联系客服
     </button>
 
@@ -209,6 +209,7 @@
         const contactBtn = document.getElementById('contactBtn');
         const contactModal = document.getElementById('contactModal');
         const closeModal = document.getElementById('closeModal');
+        const contactForm = document.getElementById('contactForm');
         const successMsg = document.getElementById('successMsg');
         const submitBtn = document.getElementById('submitBtn');
 
@@ -226,13 +227,13 @@
             });
 
             // 表单提交处理
-            document.querySelector('form[name="contact"]').addEventListener('submit', async (e) => {
+            contactForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span>提交中...</span><i class="fa fa-spinner fa-spin"></i>';
 
                 try {
-                    const formData = new FormData(e.target);
+                    const formData = new FormData(contactForm);
                     const response = await fetch('/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -241,16 +242,16 @@
 
                     if (response.ok) {
                         // 显示成功提示
-                        e.target.classList.add('hidden');
+                        contactForm.classList.add('hidden');
                         successMsg.classList.remove('hidden');
-                        e.target.reset();
+                        contactForm.reset();
 
                         // 3秒后关闭弹窗
                         setTimeout(() => {
                             contactModal.classList.add('hidden');
                             submitBtn.disabled = false;
                             submitBtn.innerHTML = '<span>提交咨询</span><i class="fa fa-paper-plane-o"></i>';
-                            e.target.classList.remove('hidden');
+                            contactForm.classList.remove('hidden');
                             successMsg.classList.add('hidden');
                         }, 3000);
                     } else {
