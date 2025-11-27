@@ -62,17 +62,12 @@
                 line-height: 1.85; 
                 letter-spacing: 0.03em; 
             }
-            /* 仅修改这里：竖排联系客服按钮样式 */
             .fixed-contact-btn {
                 position: fixed;
                 right: 20px;
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 40;
-                writing-mode: vertical-rl; /* 文字竖排 */
-                text-orientation: upright; /* 文字垂直排列 */
-                padding: 12px 8px; /* 适配竖排的内边距 */
-                white-space: nowrap; /* 防止文字换行 */
             }
         }
     </style>
@@ -114,7 +109,7 @@
         </footer>
     </div>
 
-    <!-- 右侧固定联系客服按钮（仅竖排修改） -->
+    <!-- 右侧固定联系客服按钮 -->
     <button id="contactBtn" class="fixed-contact-btn bg-primary hover:bg-primary/90 text-white px-5 py-3 rounded-lg shadow-soft transition-all flex items-center gap-2">
         <i class="fa fa-headphones"></i> 联系客服
     </button>
