@@ -40,6 +40,9 @@
                 text-shadow: 2px 2px 0 rgba(255,255,255,0.9), 3px 3px 0 rgba(255,107,157,0.1);
                 letter-spacing: 0.08em;
             }
+            .answer-text {
+                line-height: 1.4; /* 更紧凑的行高 */
+            }
         }
     </style>
 </head>
@@ -58,7 +61,7 @@
                 <i class="fa fa-list-alt text-primary"></i>
                 <span>问答清单（点击展开/收起答案）</span>
             </h2>
-            <div id="qaList" class="space-y-3"></div> 
+            <div id="qaList" class="space-y-2"></div> <!-- 更紧凑的间距 -->
         </div>
 
         <footer class="mt-10 text-center text-gray-400 text-xs">
@@ -132,12 +135,21 @@
                     <i class="fa fa-chevron-down text-primary text-xs transition-transform duration-200"></i>
                 `;
                 
-                // 答案内容区（无段前空行）
+                // 答案内容区（彻底清除空行和多余空格）
                 const answerContent = document.createElement('div');
                 answerContent.className = 'hidden answer-fade p-2 bg-white border-t border-gray-100';
+                
+                // 深度清洗答案内容
+                let cleanAnswer = item.answer || '';
+                cleanAnswer = cleanAnswer
+                    .replace(/^\s+|\s+$/g, '') // 清除首尾空白
+                    .replace(/\n+/g, '\n')     // 合并连续换行
+                    .replace(/\n/g, '<br>')    // 替换换行为br
+                    .replace(/<br><br>/g, '<br>'); // 清除连续br
+                
                 answerContent.innerHTML = `
-                    <div class="text-gray-600 text-sm leading-relaxed pl-2 border-l-2 border-primary/30 p-0 rounded-r-sm whitespace-pre-line">
-                        ${item.answer.replace(/\n/g, '<br>')}
+                    <div class="text-gray-600 text-sm pl-2 border-l-2 border-primary/30 p-0 rounded-r-sm answer-text">
+                        ${cleanAnswer || '无答案内容'}
                     </div>
                 `;
                 
@@ -162,7 +174,4 @@
     <!-- 引入Excel解析库 -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </body>
-
 </html>
-
-
