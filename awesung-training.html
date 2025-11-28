@@ -134,10 +134,10 @@
                 
                 // 答案内容区（无段前空行）
                 const answerContent = document.createElement('div');
-                answerContent.className = 'hidden answer-fade p-3 bg-white border-t border-gray-100';
+                answerContent.className = 'hidden answer-fade p-2 bg-white border-t border-gray-100';
                 answerContent.innerHTML = `
-                    <div class="text-gray-600 text-sm leading-relaxed pl-2 border-l-2 border-primary/30 p-2 rounded-r-sm whitespace-pre-line">
-                        ${item.answer.replace(/\n/g, '<br>').replace(/^\s+/, '')}
+                    <div class="text-gray-600 text-sm leading-relaxed pl-2 border-l-2 border-primary/30 p-0 rounded-r-sm whitespace-pre-line">
+                        ${item.answer.replace(/\n/g, '<br>')}
                     </div>
                 `;
                 
@@ -164,4 +164,5 @@
 </body>
 
 </html>
+
 
