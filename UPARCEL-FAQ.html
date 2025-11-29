@@ -26,6 +26,7 @@
                     },
                     fontFamily: {
                         inter: ['Inter', 'system-ui', 'sans-serif'],
+                        'microsoft-yahei': ['"Microsoft YaHei"', 'sans-serif'] // 添加微软雅黑字体
                     },
                     boxShadow: {
                         'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
@@ -71,6 +72,13 @@
                 border-radius: 30px;
                 transition: all 0.3s ease;
             }
+            /* 标语样式优化 */
+            .slogan-text {
+                font-family: "Microsoft YaHei", sans-serif;
+                font-size: 0.75rem; /* 更小的字号 */
+                line-height: 1.2;   /* 更小的行间距 */
+                letter-spacing: 0.01em;
+            }
         }
     </style>
 </head>
@@ -100,9 +108,9 @@
 
         <!-- 问题列表区域（现代卡片+留白） -->
         <div class="bg-white rounded-xl shadow-card p-6 sm:p-8 mb-16">
-            <!-- 右上角标语（轻量级样式） -->
+            <!-- 右上角标语（优化样式） -->
             <div class="text-right mb-6">
-                <p class="text-primary font-medium text-sm sm:text-base tracking-wide">美好生活，全球交付</p>
+                <p class="text-primary font-medium slogan-text">美好生活，全球交付</p>
             </div>
             
             <h2 class="text-xl sm:text-2xl font-semibold text-neutral-800 mb-6 flex items-center gap-2">
