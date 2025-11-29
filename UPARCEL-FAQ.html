@@ -15,17 +15,17 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#165DFF', // logo蓝色主色调
-                        secondary: '#F0F7FF', // 浅蓝色背景
-                        accent: '#0E42C9' // 深蓝色hover
+                        primary: '#03519D', // 统一改为#03519D
+                        secondary: '#F0F7FF', 
+                        accent: '#023E7D' // 更深的同色系
                     },
                     fontFamily: {
                         comic: ['Comic Neue', 'sans-serif'],
                         inter: ['Inter', 'system-ui', 'sans-serif']
                     },
                     boxShadow: {
-                        'soft': '0 4px 12px rgba(22, 93, 255, 0.08)',
-                        'hover': '0 6px 16px rgba(22, 93, 255, 0.15)',
+                        'soft': '0 4px 12px rgba(3, 81, 157, 0.08)',
+                        'hover': '0 6px 16px rgba(3, 81, 157, 0.15)',
                         'success': '0 0 0 2px rgba(34, 197, 94, 0.2)'
                     }
                 }
@@ -53,8 +53,8 @@
             }
             .super-round-title { 
                 font-weight: 900; 
-                color: #165DFF;
-                text-shadow: 2px 2px 0 rgba(255,255,255,0.9), 3px 3px 0 rgba(22, 93, 255, 0.1);
+                color: #03519D;
+                text-shadow: 2px 2px 0 rgba(255,255,255,0.9), 3px 3px 0 rgba(3, 81, 157, 0.1);
                 letter-spacing: 0.08em;
             }
             .body-text { 
@@ -77,8 +77,8 @@
                 transition: all 0.3s ease;
             }
             .fixed-contact-btn:hover {
-                background-color: #0E42C9;
-                box-shadow: 0 4px 12px rgba(22, 93, 255, 0.2);
+                background-color: #023E7D;
+                box-shadow: 0 4px 12px rgba(3, 81, 157, 0.2);
             }
         }
     </style>
@@ -106,7 +106,12 @@
         </div>
 
         <!-- 问题列表区域 -->
-        <div class="bg-white rounded-xl shadow-soft p-6">
+        <div class="bg-white rounded-xl shadow-soft p-6 mb-12">
+            <!-- 右上角标语 -->
+            <div class="text-right mb-6">
+                <p class="body-text text-primary font-medium">美好生活，全球交付</p>
+            </div>
+            
             <h2 class="text-xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
                 <i class="fa fa-list-ul text-primary text-xl"></i>
                 <span class="body-text">问题清单（点击查看答案）</span>
@@ -117,7 +122,6 @@
         <!-- 页脚 -->
         <footer class="mt-12 text-center text-gray-600 text-sm">
             <p class="body-text">© 2025 AWESUNG</p>
-            <p class="body-text text-[#03519D] mt-1">美好生活，全球交付</p>
         </footer>
     </div>
 
