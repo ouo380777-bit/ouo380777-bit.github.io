@@ -41,7 +41,7 @@
                 letter-spacing: 0.08em;
             }
             .answer-text {
-                line-height: 1.4; /* 更紧凑的行高 */
+                line-height: 1.5; /* 值越小行高越紧凑 */
             }
         }
     </style>
@@ -137,7 +137,7 @@
                 
                 // 答案内容区（彻底清除空行和多余空格）
                 const answerContent = document.createElement('div');
-                answerContent.className = 'hidden answer-fade p-2 bg-white border-t border-gray-100';
+                answerContent.className = 'hidden answer-fade p-2.5 bg-white border-t border-gray-100';
                 
                 // 深度清洗答案内容
                 let cleanAnswer = item.answer || '';
@@ -175,3 +175,4 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </body>
 </html>
+
