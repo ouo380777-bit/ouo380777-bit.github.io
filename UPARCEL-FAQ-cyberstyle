@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPARCEL FAQ | 科技中心</title>
+    <!-- 外部资源引入 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tech: {
+                            dark: '#0F172A', // 科技黑
+                            bg: '#1E293B',   // 深灰底
+                            primary: '#0EA5E9', // 霓虹蓝
+                            glow: '#38BDF8',  // 发光蓝
+                            text: '#E2E8F0'   // 浅灰文字
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'], // 科技感字体
+                        inter: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px rgba(14, 165, 233, 0.5)',
+                        'hover-glow': '0 0 20px rgba(56, 189, 248, 0.7)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .answer-fade { 
+                animation: fadeIn 0.3s ease-out; 
+            }
+            .tech-glow {
+                position: relative;
+                overflow: hidden;
+            }
+            .tech-glow::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.2), transparent);
+                animation: glowSlide 3s infinite linear;
+            }
+            .hover-lift {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-2px);
+            }
+            @keyframes fadeIn { 
+                from { opacity: 0; transform: translateY(10px); } 
+                to { opacity: 1; transform: translateY(0); } 
+            }
+            @keyframes glowSlide {
+                100% { left: 100%; }
+            }
+            .body-text { 
+                font-family: 'Inter', sans-serif;
+                font-size: 0.95rem; 
+                line-height: 1.7; 
+                letter-spacing: 0.02em; 
+            }
+            .contact-btn {
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                z-index: 40;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 18px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+
+<!-- 科技感深色背景 -->
+<body class="bg-tech-dark min-h-screen font-inter text-tech-text">
+    <div class="container mx-auto px-4 sm:px-6 py-12 max-w-3xl">
+        <!-- 页面标题：Logo+科技感标题 -->
+        <header class="text-center mb-16">
+            <img src="UPARCEL-LOGO.jpg" alt="UPARCEL-Logo" class="w-[clamp(10rem,35vw,16rem)] mx-auto mb-4 block">
+            <h1 class="font-orbitron text-2xl sm:text-3xl text-tech-primary tracking-wider">
+                UPARCEL 智能服务中心
+            </h1>
+        </header>
+
+        <!-- 答案显示区域（科技卡片） -->
+        <div id="answerContainer" class="bg-tech-bg rounded-xl border border-tech-primary/30 p-6 sm:p-8 mb-8 hidden tech-glow">
+            <h2 class="text-xl sm:text-2xl font-orbitron font-semibold text-tech-primary mb-5 flex items-center gap-2">
+                <i class="fa-solid fa-terminal text-tech-glow"></i>
+                <span id="answerTitle" class="body-text">问题详情</span>
+            </h2>
+            <div class="relative">
+                <div id="answerContent" class="body-text text-tech-text pl-2 border-l-2 border-tech-primary/50 p-3 rounded-r-lg">
+                    <!-- 答案内容 -->
+                </div>
+                <!-- 附件容器（科技按钮） -->
+                <div id="attachmentsContainer" class="mt-4 pl-4 flex flex-wrap gap-3">
+                    <!-- 附件按钮 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 问题列表区域（科技卡片） -->
+        <div class="bg-tech-bg rounded-xl border border-tech-primary/30 p-6 sm:p-8 mb-16 tech-glow">
+            <!-- 右上角标语（科技感） -->
+            <div class="text-right mb-6">
+                <p class="font-orbitron text-tech-glow text-sm sm:text-base tracking-wider">
+                    美好生活 · 全球交付
+                </p>
+            </div>
+            
+            <h2 class="text-xl sm:text-2xl font-orbitron font-semibold text-tech-primary mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-microchip text-tech-glow"></i>
+                <span class="body-text">智能问题清单</span>
+            </h2>
+            <ul id="questionsList" class="space-y-3 text-tech-text">
+                <!-- 问题项动态生成 -->
+            </ul>
+        </div>
+
+        <!-- 页脚（科技极简） -->
+        <footer class="mt-8 text-center text-tech-text/70 text-sm font-orbitron">
+            <p>© 2025 UPARCEL · 智能物流系统</p>
+        </footer>
+    </div>
+
+    <!-- 联系按钮（科技悬浮） -->
+    <button id="contactBtn" class="contact-btn bg-tech-primary text-tech-dark font-orbitron shadow-glow hover:shadow-hover-glow hover-lift">
+        <i class="fa-solid fa-headset"></i>
+        <span>在线客服</span>
+    </button>
+
+    <!-- 客服弹窗（科技模态框） -->
+    <div id="contactModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-tech-bg rounded-xl border border-tech-primary/30 p-6 sm:p-8 max-w-md w-full mx-4 transform transition-all scale-100 tech-glow" id="modalContent">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-xl font-orbitron font-semibold text-tech-primary flex items-center gap-2">
+                    <i class="fa-solid fa-comments text-tech-glow"></i> 智能客服交互
+                </h3>
+                <button type="button" id="closeModal" class="text-tech-text/70 hover:text-tech-glow transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- 成功提示 -->
+            <div id="successMsg" class="hidden bg-tech-primary/20 border border-tech-primary/40 rounded-lg p-4 mb-4">
+                <div class="flex items-center gap-2 text-tech-glow">
+                    <i class="fa-solid fa-check-circle text-xl"></i>
+                    <div>
+                        <h4 class="font-medium font-orbitron">提交成功</h4>
+                        <p class="text-sm body-text">智能系统已接收您的咨询，将尽快响应</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 表单（科技风格） -->
+            <form name="contact" method="POST" netlify class="space-y-4" id="contactForm">
+                <input type="hidden" name="form-name" value="contact">
+                <div>
+                    <label class="block text-sm text-tech-text/80 mb-1.5 font-orbitron">您的姓名 *</label>
+                    <input type="text" name="name" class="w-full px-4 py-2.5 bg-tech-dark border border-tech-primary/30 rounded-lg focus:border-tech-glow focus:outline-none text-tech-text transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-tech-text/80 mb-1.5 font-orbitron">您的邮箱 *</label>
+                    <input type="email" name="email" class="w-full px-4 py-2.5 bg-tech-dark border border-tech-primary/30 rounded-lg focus:border-tech-glow focus:outline-none text-tech-text transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm text-tech-text/80 mb-1.5 font-orbitron">咨询内容 *</label>
+                    <textarea name="message" class="w-full px-4 py-2.5 bg-tech-dark border border-tech-primary/30 rounded-lg focus:border-tech-glow focus:outline-none text-tech-text transition-all" rows="4" required></textarea>
+                </div>
+                <button type="submit" id="submitBtn" class="w-full bg-tech-primary text-tech-dark font-orbitron px-4 py-2.5 rounded-lg hover:bg-tech-glow shadow-glow hover:shadow-hover-glow transition-all flex items-center justify-center gap-2 hover-lift">
+                    <span>提交咨询</span>
+                    <i class="fa-solid fa-satellite-dish"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 问答数据
+        const qaData = [
+            {
+                question: "如何创建打单账号？",
+                answer:`请提供贵司的开户资料，包括：
+1. 开户手机号
+2. 营业执照副本
+我们将为您创建专属的打单账号。`,
+                attachments: [
+                    { name: "客户开户及联系登记表2025.xls", url: "attachments/customer_registration_2025.xls" }
+                ]
+            },
+            {
+                question: "介绍一下你们公司的业务？",
+                answer: "我们欧洲业务部门开辟了多项优势渠道，涵盖清关，转运，一件代发，账号等业务服务，包括DHL,CTT等优惠的尾程价格账号。",
+                attachments: [
+                    { name: "AWESUNG业务介绍手册.pdf", url: "attachments/AWESUNG业务介绍手册.pdf" },
+                    { name: "欧洲渠道价格表.xlsx", url: "attachments/欧洲渠道价格表.xlsx" }
+                ]
+            },
+            {
+                question: "财务结算模式是怎么样？可否月结？",
+                answer: "您的意向合作业务是什么呢？账号业务需要预充值，我们的欧元收款账号是：XXX；人民币收款账号是：XXX；请在完成打款之后发送水单给我们业务负责人，我们会尽快给您开放打单额度。",
+                attachments: [
+                    { name: "收款银行账号.pdf", url: "attachments/收款银行账号.pdf" }
+                ]
+            },
+            {
+                question: "AAA",
+                answer: "a。",
+                attachments: []
+            }
+        ];
+
+        // DOM元素
+        const answerContainer = document.getElementById('answerContainer');
+        const answerTitle = document.getElementById('answerTitle');
+        const answerContent = document.getElementById('answerContent');
+        const attachmentsContainer = document.getElementById('attachmentsContainer');
+        const questionsList = document.getElementById('questionsList');
+        const contactBtn = document.getElementById('contactBtn');
+        const contactModal = document.getElementById('contactModal');
+        const closeModal = document.getElementById('closeModal');
+        const successMsg = document.getElementById('successMsg');
+        const submitBtn = document.getElementById('submitBtn');
+        const contactForm = document.getElementById('contactForm');
+        const modalContent = document.getElementById('modalContent');
+
+        // 初始化问题列表（科技风格）
+        document.addEventListener('DOMContentLoaded', () => {
+            qaData.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center gap-3 p-3.5 bg-tech-dark border border-tech-primary/20 rounded-lg cursor-pointer transition-all hover:border-tech-glow hover-lift';
+                li.innerHTML = `
+                    <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-orbitron bg-tech-primary/20 text-tech-glow">${index + 1}</span>
+                    <span class="body-text text-sm sm:text-base text-tech-text flex-1">${item.question}</span>
+                `;
+                li.addEventListener('click', () => showAnswer(index, item.question));
+                questionsList.appendChild(li);
+            });
+
+            // 表单提交处理
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span>提交中...</span><i class="fa-solid fa-spinner fa-spin ml-2"></i>';
+
+                try {
+                    const formData = new FormData(contactForm);
+                    const response = await fetch('/', {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    if (response.ok) {
+                        contactForm.classList.add('hidden');
+                        successMsg.classList.remove('hidden');
+                        contactForm.reset();
+                        setTimeout(() => {
+                            contactModal.classList.add('hidden');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<span>提交咨询</span><i class="fa-solid fa-satellite-dish ml-2"></i>';
+                            contactForm.classList.remove('hidden');
+                            successMsg.classList.add('hidden');
+                        }, 3000);
+                    } else {
+                        throw new Error('提交失败');
+                    }
+                } catch (error) {
+                    alert('提交失败，请稍后重试！');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>提交咨询</span><i class="fa-solid fa-satellite-dish ml-2"></i>';
+                }
+            });
+        });
+
+        // 显示答案（附件按钮科技风格）
+        function showAnswer(index, questionText) {
+            const item = qaData[index];
+            answerTitle.textContent = questionText;
+            answerContent.innerHTML = item.answer.replace(/\n/g, '<br>').replace(/\s{2,}/g, ' ');
+            attachmentsContainer.innerHTML = '';
+            
+            if (item.attachments.length) {
+                item.attachments.forEach(attach => {
+                    const a = document.createElement('a');
+                    a.href = attach.url;
+                    a.download = attach.name;
+                    a.className = 'inline-flex items-center gap-2 px-4 py-2 bg-tech-dark border border-tech-primary/30 text-tech-glow rounded-lg text-sm hover:border-tech-glow transition-all';
+                    a.innerHTML = `<i class="fa-solid fa-download"></i> ${attach.name}`;
+                    attachmentsContainer.appendChild(a);
+                });
+            } else {
+                attachmentsContainer.innerHTML = '<p class="text-tech-text/70 text-sm">无附件</p>';
+            }
+
+            answerContainer.classList.remove('hidden');
+            setTimeout(() => {
+                answerContainer.classList.add('answer-fade');
+            }, 10);
+            answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // 弹窗控制
+        contactBtn.addEventListener('click', () => {
+            contactModal.classList.remove('hidden');
+            setTimeout(() => modalContent.classList.add('scale-100'), 10);
+        });
+        closeModal.addEventListener('click', () => contactModal.classList.add('hidden'));
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) contactModal.classList.add('hidden');
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !contactModal.classList.contains('hidden')) {
+                contactModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
