@@ -160,15 +160,15 @@
                 </div>
             </div>
             
-            <!-- 最终版表单：解决405错误 + Netlify原生提交 -->
+            <!-- 修复：闭合表单标签 + 异步提交逻辑 -->
             <form 
                 name="contact" 
                 method="POST" 
                 netlify-honeypot="bot-field" 
                 data-netlify="true" 
                 netlify
-                action="/"  <!-- 关键：指定提交到根目录，解决405 -->
-                enctype="application/x-www-form-urlencoded"  <!-- 强制编码格式 -->
+                action="/"
+                enctype="application/x-www-form-urlencoded"
                 class="space-y-4" 
                 id="contactForm"
             >
@@ -318,6 +318,45 @@
                 li.addEventListener('click', () => showAnswer(index, item.question));
                 questionsList.appendChild(li);
             });
+
+            // 核心修复：表单异步提交 + 成功提示
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); // 阻止默认跳转
+                submitBtn.disabled = true; // 禁用提交按钮防重复提交
+                submitBtn.innerHTML = '<span>提交中...</span><i class="fa-solid fa-spinner fa-spin"></i>';
+
+                try {
+                    // 收集表单数据
+                    const formData = new FormData(contactForm);
+                    // 提交到Netlify
+                    const response = await fetch('/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(formData).toString()
+                    });
+
+                    if (response.ok) {
+                        // 显示成功提示
+                        successMsg.classList.remove('hidden');
+                        successMsg.classList.add('answer-fade');
+                        // 清空表单
+                        contactForm.reset();
+                        // 5秒后隐藏成功提示（可选）
+                        setTimeout(() => {
+                            successMsg.classList.add('hidden');
+                        }, 5000);
+                    } else {
+                        alert('提交失败，请稍后重试！');
+                    }
+                } catch (error) {
+                    alert('网络错误，请检查网络后重试！');
+                    console.error('表单提交失败：', error);
+                } finally {
+                    // 恢复提交按钮
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>提交咨询</span><i class="fa-solid fa-paper-plane"></i>';
+                }
+            });
         });
 
         // 显示答案逻辑
@@ -363,7 +402,10 @@
         closeModal.addEventListener('click', () => {
             modalContent.classList.remove('scale-100', 'opacity-100');
             modalContent.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => contactModal.classList.add('hidden'), 300);
+            setTimeout(() => {
+                contactModal.classList.add('hidden');
+                successMsg.classList.add('hidden'); // 关闭弹窗时隐藏成功提示
+            }, 300);
         });
 
         // 点击弹窗外部关闭
@@ -371,7 +413,10 @@
             if (e.target === contactModal) {
                 modalContent.classList.remove('scale-100', 'opacity-100');
                 modalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => contactModal.classList.add('hidden'), 300);
+                setTimeout(() => {
+                    contactModal.classList.add('hidden');
+                    successMsg.classList.add('hidden'); // 关闭弹窗时隐藏成功提示
+                }, 300);
             }
         });
 
@@ -380,7 +425,10 @@
             if (e.key === 'Escape' && !contactModal.classList.contains('hidden')) {
                 modalContent.classList.remove('scale-100', 'opacity-100');
                 modalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => contactModal.classList.add('hidden'), 300);
+                setTimeout(() => {
+                    contactModal.classList.add('hidden');
+                    successMsg.classList.add('hidden'); // 关闭弹窗时隐藏成功提示
+                }, 300);
             }
         });
     </script>
