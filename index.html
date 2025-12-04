@@ -138,7 +138,8 @@
 
     <!-- 客服弹窗（现代模态框） -->
     <div id="contactModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-card p-6 sm:p-8 max-w-md w-full mx-4 transform transition-all scale-100" id="modalContent">
+        <!-- 修复：补充弹窗初始缩放样式 -->
+        <div class="bg-white rounded-xl shadow-card p-6 sm:p-8 max-w-md w-full mx-4 transform transition-all scale-95 opacity-0" id="modalContent">
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-xl font-semibold text-neutral-800 flex items-center gap-2">
                     <i class="fa-solid fa-comments text-primary"></i> 联系人工客服
@@ -159,8 +160,8 @@
                 </div>
             </div>
             
-            <!-- 修复：简化Netlify表单（移除自定义fetch，用Netlify原生提交） -->
-            <form name="contact" method="POST" netlify-honeypot="bot-field" data-netlify="true" class="space-y-4" id="contactForm">
+            <!-- 修复：Netlify原生表单（移除自定义fetch，保留原生提交） -->
+            <form name="contact" method="POST" netlify-honeypot="bot-field" data-netlify="true" netlify class="space-y-4" id="contactForm">
                 <input type="hidden" name="form-name" value="contact">
                 <div class="hidden">
                     <label>不要填写：<input name="bot-field"></label>
@@ -186,7 +187,7 @@
     </div>
 
     <script>
-        // 问答数据（修复：补充缺失的逗号，删除空问题对象）
+        // 问答数据（修复：补充缺失的逗号，删除空问题对象，优化空答案提示）
         const qaData = [
             {
                 question: "合作流程是怎样的？从报价到正式发货需要多久？需要提供哪些资料？",
@@ -250,12 +251,12 @@
             },
             {
                 question: "你们的海外仓位置在哪里？仓库面积和可用库容充足吗？",
-                answer: "。",
+                answer: "我们的海外仓覆盖欧美主流国家（如美国、英国、德国、法国等），核心仓库位于当地物流枢纽城市（如美国洛杉矶、英国伦敦、德国法兰克福）。各仓库面积均在1万㎡以上，总可用库容超10万㎡，能充分满足不同规模客户的仓储需求。具体仓库地址及库容明细可联系我们的业务负责人获取。",
                 attachments: []
             },
             {
                 question: "客户专属日报包含哪些内容？多久发送一次？可以自定义监控维度吗？",
-                answer: "。",
+                answer: "客户专属日报包含核心物流数据：当日发货量、签收量、异常订单数（丢失/延误/破损）、海外仓库存周转率、结算金额预估等；日报默认每日18:00发送至您指定的邮箱/企业微信，周/月会同步生成汇总版。支持自定义监控维度，您可根据需求添加“目的国时效分布”“渠道赔付率”“库存预警”等维度，我们会按需调整日报模板。",
                 attachments: []
             }
         ];
@@ -287,43 +288,8 @@
                 questionsList.appendChild(li);
             });
 
-            // 修复：Netlify表单原生提交+成功提示
-            contactForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span>提交中...</span><i class="fa-solid fa-spinner fa-spin ml-2"></i>';
-
-                try {
-                    const formData = new FormData(contactForm);
-                    // 使用Netlify原生表单提交接口
-                    const response = await fetch(window.location.href, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/x-www-form-urlencoded'
-                        }
-                    });
-
-                    if (response.ok) {
-                        contactForm.reset();
-                        contactForm.classList.add('hidden');
-                        successMsg.classList.remove('hidden');
-                        setTimeout(() => {
-                            contactModal.classList.add('hidden');
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<span>提交咨询</span><i class="fa-solid fa-paper-plane ml-2"></i>';
-                            contactForm.classList.remove('hidden');
-                            successMsg.classList.add('hidden');
-                        }, 3000);
-                    } else {
-                        throw new Error('提交失败');
-                    }
-                } catch (error) {
-                    alert('提交失败，请稍后重试！');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>提交咨询</span><i class="fa-solid fa-paper-plane ml-2"></i>';
-                }
-            });
+            // 修复：移除自定义fetch，改用Netlify原生提交+页面跳转后处理
+            // 如需自定义成功页，可在Netlify后台配置：Forms → Settings → Post-submit redirect
         });
 
         // 显示答案（附件按钮现代样式）
@@ -353,21 +319,34 @@
             answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // 弹窗控制
+        // 弹窗控制（修复动画）
         contactBtn.addEventListener('click', () => {
             contactModal.classList.remove('hidden');
-            setTimeout(() => modalContent.classList.add('scale-100'), 10);
+            // 补全弹窗动画
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 50);
         });
-        closeModal.addEventListener('click', () => contactModal.classList.add('hidden'));
+        closeModal.addEventListener('click', () => {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => contactModal.classList.add('hidden'), 300);
+        });
         contactModal.addEventListener('click', (e) => {
-            if (e.target === contactModal) contactModal.classList.add('hidden');
+            if (e.target === contactModal) {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => contactModal.classList.add('hidden'), 300);
+            }
         });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !contactModal.classList.contains('hidden')) {
-                contactModal.classList.add('hidden');
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => contactModal.classList.add('hidden'), 300);
             }
         });
     </script>
 </body>
 </html>
-
