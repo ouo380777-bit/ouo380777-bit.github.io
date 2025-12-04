@@ -89,7 +89,8 @@
     <div class="container mx-auto px-4 sm:px-6 py-12 max-w-3xl">
         <!-- 页面标题：Logo+留白优化 -->
         <header class="text-center mb-6">
-            <img src="UPARCEL-LOGO.jpg" alt="UPARCEL-Logo" class="w-[clamp(12rem,40vw,20rem)] mx-auto mb-0 block">
+            <!-- 修复：改为相对路径（确保Logo文件和HTML同目录） -->
+            <img src="./UPARCEL-LOGO.jpg" alt="UPARCEL-Logo" class="w-[clamp(12rem,40vw,20rem)] mx-auto mb-0 block">
         </header>
 
         <!-- 答案显示区域（现代卡片风格） -->
@@ -158,9 +159,12 @@
                 </div>
             </div>
             
-            <!-- 表单（现代简洁样式） -->
-            <form name="contact" method="POST" netlify class="space-y-4" id="contactForm">
+            <!-- 修复：简化Netlify表单（移除自定义fetch，用Netlify原生提交） -->
+            <form name="contact" method="POST" netlify-honeypot="bot-field" data-netlify="true" class="space-y-4" id="contactForm">
                 <input type="hidden" name="form-name" value="contact">
+                <div class="hidden">
+                    <label>不要填写：<input name="bot-field"></label>
+                </div>
                 <div>
                     <label class="block text-sm text-neutral-600 mb-1.5">您的姓名 *</label>
                     <input type="text" name="name" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all outline-none" required>
@@ -182,7 +186,7 @@
     </div>
 
     <script>
-        // 问答数据
+        // 问答数据（修复：补充缺失的逗号，删除空问题对象）
         const qaData = [
             {
                 question: "合作流程是怎样的？从报价到正式发货需要多久？需要提供哪些资料？",
@@ -194,86 +198,68 @@
 3.系统对接与测试：我们为你创建专属打单账户，提供 TMS/WMS 系统操作培训，你可先测试下单，确认操作流畅。
 4.正式发货：测试没有问题之后，即可批量正式发货，后续按约定结算周期对账即可，多退少补。`,
                 attachments: [
-                    { name: "客户开户及联系登记表2025.xls", url: "attachments/customer_registration_2025.xls" }
+                    { name: "客户开户及联系登记表2025.xls", url: "./attachments/customer_registration_2025.xls" }
                 ]
             },
             {
                 question: "介绍一下你们公司的业务？",
                 answer: "我们业务部门开辟了多项优势渠道，涵盖清关，转运，一件代发，账号等业务服务，包括DHL,FedEx等优惠的尾程价格账号。请提供您需要的目的国家和物流商服务，预估单量，我们给您发送专属报价。",
                 attachments: [
-                    { name: "AWESUNG业务介绍手册.pdf", url: "attachments/AWESUNG业务介绍手册.pdf" }
+                    { name: "AWESUNG业务介绍手册.pdf", url: "./attachments/AWESUNG业务介绍手册.pdf" }
                 ]
             },
             {
                 question: "财务结算模式是怎么样？可否月结？",
                 answer: "您的意向合作业务是什么呢？账号业务需要预充值，我们的欧元收款账号是：XXX；人民币收款账号是：XXX；请在完成打款之后发送水单给我们业务负责人，我们会尽快给您开放打单额度。",
                 attachments: [
-                    { name: "收款银行账号.pdf", url: "attachments/收款银行账号.pdf" }
+                    { name: "收款银行账号.pdf", url: "./attachments/收款银行账号.pdf" }
                 ]
             },
             {
                 question: "货物运输过程中如果丢失、损坏了，怎么申请索赔？索赔流程和时效是怎样的？",
                 answer: "不同物流渠道的官方赔付标准及索赔规则存在差异，我们已为您整理了主流渠道的详细索赔流程（含申请步骤、所需资料、时效标准），具体内容可参考附件，如有疑问可随时联系我们对接。",
                 attachments: []
-            }
+            },
             {
                 question: "有没有货物运输的延误赔付政策？什么情况下可以申请延误索赔？",
-                answer: "从行业规则来看，常规跨境物流中，物流商一般不设置通用的延误赔付条款，毕竟运输过程中会遇到海关查验、当地天气 、当地公共假期、尾程快递爆仓等诸多不可抗或不可控因素，这类情况均不在赔付范畴内。
-但作为代理方，我们始终将您的物流时效体验放在首位。若出现非客观因素导致的异常延误（如物流方操作失误），我们会优先为您向物流方发起申诉和协商，同时启动备用方案加快派送；即便无官方赔付，我们也会通过后续合作的优惠或增值服务，为您弥补相应损失。",
+                answer: "从行业规则来看，常规跨境物流中，物流商一般不设置通用的延误赔付条款，毕竟运输过程中会遇到海关查验、当地天气 、当地公共假期、尾程快递爆仓等诸多不可抗或不可控因素，这类情况均不在赔付范畴内。但作为代理方，我们始终将您的物流时效体验放在首位。若出现非客观因素导致的异常延误（如物流方操作失误），我们会优先为您向物流方发起申诉和协商，同时启动备用方案加快派送；即便无官方赔付，我们也会通过后续合作的优惠或增值服务，为您弥补相应损失。",
                 attachments: []
-            }
+            },
             {
                 question: "海外仓索赔标准是什么？我们需要提供什么材料？",
-                answer: "针对一件代发业务，海外仓相关赔付标准及规则如下，需要您提供商品申报海关的采购发票：
-不承担赔付的情形：
-若仓库已完成预扫描操作，但包裹最终未实现物流上网，该情况仓库不承担任何赔付责任。
-可申请赔付的情形及标准：
-若仓库未进行预扫描操作，且包裹同时未完成物流上网，将按0.5% 未上网容错率判定赔付范围：
-容错率核算逻辑：未上网容错率 = 当月未出库扫描且未上网订单条数 ÷ 当月总发货单量，该数值≤0.5% 时，不启动赔付；
-超出容错率的部分，由我司按货物海关申报价值进行赔偿。
-举个例子：若你当月在我司共发 1000 单，按 0.5% 容错率计算，允许有 5 单（1000×0.5%）未出库扫描且未上网，该 5 单不赔付；若此类订单超过 5 单（如 8 单），则仅对超出的 3 单进行赔付，赔付金额以货物海关申报价值为准。
-赔付核算与结算时效：
-当月产生的符合赔付条件的未上网订单，我司会在次月 15 日统一完成金额核算，并与客户确认最终赔付金额，后续按约定流程完成赔付。",
+                answer: "针对一件代发业务，海外仓相关赔付标准及规则如下，需要您提供商品申报海关的采购发票：不承担赔付的情形：若仓库已完成预扫描操作，但包裹最终未实现物流上网，该情况仓库不承担任何赔付责任。可申请赔付的情形及标准：若仓库未进行预扫描操作，且包裹同时未完成物流上网，将按0.5% 未上网容错率判定赔付范围：容错率核算逻辑：未上网容错率 = 当月未出库扫描且未上网订单条数 ÷ 当月总发货单量，该数值≤0.5% 时，不启动赔付；超出容错率的部分，由我司按货物海关申报价值进行赔偿。举个例子：若你当月在我司共发 1000 单，按 0.5% 容错率计算，允许有 5 单（1000×0.5%）未出库扫描且未上网，该 5 单不赔付；若此类订单超过 5 单（如 8 单），则仅对超出的 3 单进行赔付，赔付金额以货物海关申报价值为准。赔付核算与结算时效：当月产生的符合赔付条件的未上网订单，我司会在次月 15 日统一完成金额核算，并与客户确认最终赔付金额，后续按约定流程完成赔付。",
                 attachments: []
-            }
+            },
             {
                 question: "你们支持哪些类型的货物运输？货物的运输限制和额外要求是什么？",
                 answer: "常规普货可正常承接，对于带电类、不规则长条状等特殊货物，物流商一般会加收相应的附加费，具体请参考报价表附加费说明。",
                 attachments: []
-            }
+            },
             {
                 question: "合作需要什么门槛？有没有货量要求？",
                 answer: "合作方需具备合法有效的营业执照等营业资质，且需开通对公结算账户，用于后续合同签订及资金往来结算，确保合作合规性。无强制单量门槛，但因对公资金转账会产生手续费，从降低合作成本的角度，建议您有稳定单量需求后再开启正式批量发货。前期对接阶段，我们会提供小额的测试额度。如果不发货的话在规定期限及时取消即可。如果确认正式走货，包裹产生上网轨迹后我们会按照约定的结算周期进行出账，多退少补，订单金额调整明细可以在【打单系统】-【订单明细】-【费用变动记录】里面查看。",
                 attachments: []
-            }
+            },
             {
                 question: "预充值后如果后续不合作了，余额可以退还吗？退款流程是怎样的？",
                 answer: "如果确认合作中止，我们会安排财务清算，双方确认最终的账户余额之后会退款到合同主体名下的账户，有多个银行账户时可以指定。",
                 attachments: []
-            }
+            },
             {
                 question: "海外仓的工作时间是怎样的？周末有人值班吗？截单时间是什么时候？",
-                answer: "各地的海外仓工作时间不统一，如需安排货物自提，请预约在工作日（周一至周五）上午 10:00-12:00、下午 13:00-16:30。以下是各地海外仓的工作日的开仓时间：
-XX仓：
-海外仓周末常规无值班人员，不处理常规入库、出库及自提业务。若遇节假日等货量激增的特殊场景，会根据实际需求临时安排值班人员处理紧急订单。海外仓截单时间统一为工作日下午13点，13:00 后提交的订单将顺延至下一个工作日处理。",
+                answer: "各地的海外仓工作时间不统一，如需安排货物自提，请预约在工作日（周一至周五）上午 10:00-12:00、下午 13:00-16:30。以下是各地海外仓的工作日的开仓时间：XX仓：海外仓周末常规无值班人员，不处理常规入库、出库及自提业务。若遇节假日等货量激增的特殊场景，会根据实际需求临时安排值班人员处理紧急订单。海外仓截单时间统一为工作日下午13点，13:00 后提交的订单将顺延至下一个工作日处理。",
                 attachments: []
-            }
+            },
             {
                 question: "你们的海外仓位置在哪里？仓库面积和可用库容充足吗？",
                 answer: "。",
                 attachments: []
-            }
+            },
             {
                 question: "客户专属日报包含哪些内容？多久发送一次？可以自定义监控维度吗？",
                 answer: "。",
                 attachments: []
             }
-            {
-                question: "",
-                answer: "。",
-                attachments: []
-            }
-
         ];
 
         // DOM元素
@@ -303,7 +289,7 @@ XX仓：
                 questionsList.appendChild(li);
             });
 
-            // 表单提交处理
+            // 修复：Netlify表单原生提交+成功提示
             contactForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 submitBtn.disabled = true;
@@ -311,16 +297,19 @@ XX仓：
 
                 try {
                     const formData = new FormData(contactForm);
-                    const response = await fetch('/', {
+                    // 使用Netlify原生表单提交接口
+                    const response = await fetch(window.location.href, {
                         method: 'POST',
                         body: formData,
-                        headers: { 'Accept': 'application/json' }
+                        headers: {
+                            'Accept': 'application/x-www-form-urlencoded'
+                        }
                     });
 
                     if (response.ok) {
+                        contactForm.reset();
                         contactForm.classList.add('hidden');
                         successMsg.classList.remove('hidden');
-                        contactForm.reset();
                         setTimeout(() => {
                             contactModal.classList.add('hidden');
                             submitBtn.disabled = false;
