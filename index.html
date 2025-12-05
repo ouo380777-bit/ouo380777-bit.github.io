@@ -15,10 +15,10 @@
             theme: {
                 extend: {
                     colors: {
-                        // 升级：低饱和蓝（更现代）+ 辅助色
                         primary: '#165DFF', 
                         secondary: '#F5F7FA',
                         accent: '#4080FF',
+                        cyber: '#00E5FF', // 赛博风格辅助色
                         neutral: {
                             50: '#F9FAFB',
                             100: '#F0F2F5',
@@ -31,13 +31,12 @@
                         inter: ['Inter', '"Microsoft YaHei"', 'system-ui', 'sans-serif'],
                     },
                     boxShadow: {
-                        // 升级：更柔和的阴影，替代厚重边框
                         card: '0 4px 20px rgba(0, 0, 0, 0.03)',
                         hover: '0 8px 30px rgba(0, 0, 0, 0.06)',
                         'btn-hover': '0 4px 12px rgba(22, 93, 255, 0.2)',
+                        'cyber-hover': '0 0 12px rgba(0, 229, 255, 0.3)', // 赛博风格阴影
                     },
                     borderRadius: {
-                        // 统一圆角，更现代
                         xl: '12px',
                         '2xl': '16px',
                     }
@@ -52,11 +51,37 @@
             .answer-fade { 
                 animation: fadeIn 0.3s ease-out; 
             }
+            /* 弱化按钮动效幅度（仅1px上移） */
             .hover-lift {
                 transition: all 0.25s ease;
             }
             .hover-lift:hover {
-                transform: translateY(-2px);
+                transform: translateY(-1px);
+            }
+            /* 赛博风格动态效果 */
+            .cyber-glow {
+                position: relative;
+                overflow: hidden;
+            }
+            .cyber-glow::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 30%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.15), transparent);
+                transform: skewX(-15deg);
+                transition: left 0.8s ease;
+            }
+            .cyber-glow:hover::before {
+                left: 130%;
+            }
+            .cyber-border {
+                border: 1px solid transparent;
+                background-clip: padding-box, border-box;
+                background-origin: padding-box, border-box;
+                background-image: linear-gradient(#F5F7FA, #F5F7FA), linear-gradient(to right, #165DFF, #00E5FF);
             }
             @keyframes fadeIn { 
                 from { opacity: 0; transform: translateY(10px); } 
@@ -77,7 +102,7 @@
     </style>
 </head>
 
-<!-- 现代简约背景：浅灰替代纯白，更柔和 -->
+<!-- 保留白色主背景适配logo -->
 <body class="bg-neutral-50 min-h-screen font-inter text-neutral-800">
     <div class="container mx-auto px-4 sm:px-6 py-8 md:py-12 max-w-3xl">
         <!-- 页面标题：轻量化设计 -->
@@ -113,13 +138,13 @@
             </div>
             
             <!-- 问题清单标题：更现代的排版 -->
-            <h2 class="text-h2 mb-8 flex items-center gap-2">
+            <h2 class="text-h2 mb-6 flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-primary text-lg"></i>
                 <span>常见问题解答</span>
             </h2>
             
-            <!-- 问题列表：更紧凑的间距+轻量化hover -->
-            <ul id="questionsList" class="space-y-2 text-neutral-700">
+            <!-- 问题列表：缩小间距+赛博动态效果 -->
+            <ul id="questionsList" class="space-y-1 text-neutral-700">
                 <!-- 问题项动态生成 -->
             </ul>
         </div>
@@ -130,7 +155,7 @@
         </footer>
     </div>
 
-    <!-- 右侧联系按钮：渐变+悬浮动效 -->
+    <!-- 右侧联系按钮：渐变+弱化动效 -->
     <button id="contactBtn" class="contact-btn bg-gradient-primary text-white shadow-card hover:shadow-btn-hover hover-lift">
         <i class="fa-solid fa-headphones-simple"></i>
         <span>在线咨询</span>
@@ -193,7 +218,7 @@
                     <textarea name="message" class="w-full px-4 py-2.5 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all outline-none text-body" rows="4" required></textarea>
                 </div>
                 
-                <!-- 提交按钮：渐变+悬浮 -->
+                <!-- 提交按钮：渐变+弱化动效 -->
                 <button type="submit" id="submitBtn" class="w-full bg-gradient-primary text-white px-4 py-2.5 rounded-xl hover:opacity-95 transition-all flex items-center justify-center gap-2 hover-lift">
                     <span>提交咨询</span>
                     <i class="fa-solid fa-paper-plane"></i>
@@ -325,10 +350,10 @@ XX仓：
 
         // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
-            // 生成问题列表：轻量化样式
+            // 生成问题列表：赛博动态效果+缩小间距
             qaData.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = 'flex items-center gap-3 p-3 bg-secondary rounded-xl cursor-pointer transition-all hover:bg-neutral-100 hover-lift';
+                li.className = 'flex items-center gap-3 p-3 cyber-glow cyber-border rounded-xl cursor-pointer transition-all hover:bg-neutral-100 hover-lift hover:shadow-cyber-hover';
                 li.innerHTML = `
                     <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium bg-primary/10 text-primary">${index + 1}</span>
                     <span class="text-sm-body flex-1">${item.question}</span>
