@@ -106,6 +106,74 @@
                 letter-spacing: 0.01em;
                 color: #374151;
             }
+
+            /* ========== 新增：流光渐变动效 ========== */
+            /* 流光背景动画 */
+            @keyframes shimmer {
+                0% { background-position: -1000px 0; }
+                100% { background-position: 1000px 0; }
+            }
+            /* 问题项基础样式 + 流光hover */
+            .question-item {
+                position: relative;
+                overflow: hidden;
+                /* 轻量呼吸动画（默认微弱动效） */
+                animation: breathe 4s ease-in-out infinite;
+            }
+            /* 呼吸动画 */
+            @keyframes breathe {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.98; transform: scale(1.005); }
+            }
+            /* 流光渐变层 */
+            .question-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(3, 81, 157, 0.05),
+                    transparent
+                );
+                background-size: 1000px 100%;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            }
+            /* hover时显示流光 */
+            .question-item:hover::before {
+                opacity: 1;
+                animation: shimmer 1.5s linear infinite;
+            }
+            /* 序号圆形呼吸动效 */
+            .question-number {
+                position: relative;
+                overflow: hidden;
+            }
+            .question-number::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(
+                    circle,
+                    rgba(3, 81, 157, 0.15) 0%,
+                    transparent 70%
+                );
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                border-radius: 50%;
+            }
+            .question-item:hover .question-number::after {
+                opacity: 1;
+                animation: breathe 2s ease-in-out infinite;
+            }
         }
     </style>
 </head>
@@ -357,10 +425,11 @@ XX仓：
             // 生成问题列表
             qaData.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = 'flex items-center gap-3 p-3.5 bg-secondary rounded-lg cursor-pointer transition-all hover:bg-neutral-100 hover-lift';
-                // 替换为question-text类（更小字号）
+                // 新增question-item类，绑定流光动效
+                li.className = 'question-item flex items-center gap-3 p-3.5 bg-secondary rounded-lg cursor-pointer transition-all hover:bg-neutral-100 hover-lift';
+                // 序号新增question-number类，绑定呼吸动效
                 li.innerHTML = `
-                    <span class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium bg-primary/10 text-primary">${index + 1}</span>
+                    <span class="question-number w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium bg-primary/10 text-primary">${index + 1}</span>
                     <span class="question-text flex-1">${item.question}</span>
                 `;
                 li.addEventListener('click', () => showAnswer(index, item.question));
@@ -481,5 +550,3 @@ XX仓：
     </script>
 </body>
 </html>
-
-
