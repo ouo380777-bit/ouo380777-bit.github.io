@@ -104,11 +104,11 @@
                 color: #374151;
             }
 
-            /* ========== 问题清单容器：彩条+慢流光 ========== */
-            /* 超慢速流光动画（20秒一圈） */
-            @keyframes slowShimmer {
-                0% { background-position: -1000px 0; }
-                100% { background-position: 1000px 0; }
+            /* ========== 核心：斜向（45度）彩条+慢流光 ========== */
+            /* 斜向慢速流光动画（20秒一圈，45度流动） */
+            @keyframes slowDiagonalShimmer {
+                0% { background-position: -1000px -1000px; }
+                100% { background-position: 1000px 1000px; }
             }
             /* 问题清单容器 */
             .questions-card {
@@ -116,7 +116,7 @@
                 overflow: hidden;
                 background-color: white;
             }
-            /* 背景流光层（增强透明度+加宽彩条） */
+            /* 斜向背景流光层（45度渐变+增强彩条） */
             .questions-card::before {
                 content: '';
                 position: absolute;
@@ -125,46 +125,49 @@
                 width: 100%;
                 height: 100%;
                 z-index: 0;
+                /* 45度斜向渐变彩条 */
                 background: linear-gradient(
-                    90deg,
+                    45deg,
                     transparent,
                     rgba(3, 81, 157, 0.08),
                     rgba(10, 120, 200, 0.1),
                     rgba(16, 152, 247, 0.08),
                     transparent
                 );
-                background-size: 1000px 100%;
-                animation: slowShimmer 20s linear infinite; /* 速度减慢到20秒 */
+                background-size: 1000px 1000px; /* 正方形尺寸适配斜向流动 */
+                animation: slowDiagonalShimmer 20s linear infinite; /* 20秒超慢速 */
                 pointer-events: none;
             }
-            /* 侧边装饰彩条（增强透明度） */
+            /* 斜向侧边装饰彩条（45度渐变） */
             .questions-card::after {
                 content: '';
                 position: absolute;
-                top: 10px;
-                bottom: 10px;
+                top: 0;
+                bottom: 0;
                 left: 0;
                 width: 4px;
+                /* 45度斜向渐变彩条 */
                 background: linear-gradient(
-                    180deg,
+                    45deg,
                     transparent,
                     var(--stripe1),
                     var(--stripe2),
                     var(--stripe3),
                     transparent
                 );
-                opacity: 0.25; /* 提高透明度让彩条更明显 */
+                opacity: 0.25;
                 border-radius: 4px;
             }
-            /* 顶部装饰彩条（加宽+增强透明度） */
+            /* 斜向顶部装饰彩条（45度渐变） */
             .questions-header::before {
                 content: '';
                 display: block;
                 width: 100%;
                 height: 6px;
                 margin-bottom: 1rem;
+                /* 45度斜向渐变彩条 */
                 background: linear-gradient(
-                    90deg,
+                    45deg,
                     transparent,
                     var(--stripe1),
                     var(--stripe2),
@@ -172,7 +175,7 @@
                     transparent
                 );
                 border-radius: 6px;
-                opacity: 0.3; /* 提高透明度 */
+                opacity: 0.3;
             }
             /* 问题列表层级 */
             .questions-wrapper {
