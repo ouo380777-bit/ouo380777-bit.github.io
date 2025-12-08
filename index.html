@@ -15,14 +15,18 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#03519D', // 主色保留
-                        secondary: '#F8FAFC', // 更浅的背景
+                        primary: '#03519D', // 主色
+                        secondary: '#F8FAFC',
                         neutral: {
                             100: '#F3F4F6',
                             200: '#E5E7EB',
                             700: '#374151',
                             800: '#1F2937'
-                        }
+                        },
+                        // 新增彩条配色
+                        stripe1: '#03519D',
+                        stripe2: '#0A78C8',
+                        stripe3: '#1098F7'
                     },
                     fontFamily: {
                         inter: ['"Microsoft YaHei"', 'Inter', 'system-ui', 'sans-serif'],
@@ -100,30 +104,93 @@
                 color: #374151;
             }
 
-            /* ========== 修复：增强彩条流光可见性 ========== */
-            @keyframes waveShimmer {
-                0% { background-position: 0 0; }
-                100% { background-position: 100% 0; }
+            /* ========== 核心：问题清单容器背景彩条流光 ========== */
+            /* 多色流光动画 */
+            @keyframes multiShimmer {
+                0% { background-position: -500px 0; }
+                100% { background-position: 500px 0; }
             }
-            /* 问题项：增强彩条透明度+改用明显的渐变 */
-            .question-item {
+            /* 问题清单容器（白色卡片） */
+            .questions-card {
                 position: relative;
                 overflow: hidden;
+                /* 底层白色背景 */
+                background-color: white;
+            }
+            /* 流光背景层 */
+            .questions-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                /* 多色渐变彩条（主色+浅蓝+淡蓝，低透明度） */
                 background: linear-gradient(
                     90deg,
-                    #F8FAFC 0%,
-                    rgba(3, 81, 157, 0.08) 30%,
-                    #F8FAFC 60%,
-                    rgba(10, 120, 200, 0.08) 90%,
-                    #F8FAFC 100%
+                    transparent,
+                    rgba(3, 81, 157, 0.04),
+                    rgba(10, 120, 200, 0.06),
+                    rgba(16, 152, 247, 0.04),
+                    transparent
                 );
-                background-size: 200% 100%;
-                /* 加快一点速度（6秒），确保能看到流动 */
-                animation: waveShimmer 6s linear infinite;
+                background-size: 500px 100%;
+                animation: multiShimmer 10s linear infinite;
+                pointer-events: none;
             }
-            /* hover/点击时高亮 */
+            /* 装饰彩条（顶部/底部/侧边） */
+            .questions-card::after {
+                content: '';
+                position: absolute;
+                top: 10px;
+                bottom: 10px;
+                left: 0;
+                width: 3px;
+                /* 竖版渐变彩条 */
+                background: linear-gradient(
+                    180deg,
+                    transparent,
+                    var(--stripe1),
+                    var(--stripe2),
+                    var(--stripe3),
+                    transparent
+                );
+                opacity: 0.15;
+                border-radius: 3px;
+            }
+            /* 顶部装饰横条 */
+            .questions-header::before {
+                content: '';
+                display: block;
+                width: 100%;
+                height: 4px;
+                margin-bottom: 1rem;
+                /* 横版渐变彩条 */
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--stripe1),
+                    var(--stripe2),
+                    var(--stripe3),
+                    transparent
+                );
+                border-radius: 4px;
+                opacity: 0.2;
+            }
+            /* 问题行容器（层级高于背景流光） */
+            .questions-wrapper {
+                position: relative;
+                z-index: 1;
+            }
+            /* 问题行样式（简洁干净） */
+            .question-item {
+                background-color: rgba(255, 255, 255, 0.9);
+                transition: all 0.3s ease;
+            }
             .question-item:hover, .question-item.active {
-                background-color: rgba(3, 81, 157, 0.05);
+                background-color: rgba(255, 255, 255, 1);
+                box-shadow: 0 2px 10px rgba(3, 81, 157, 0.08);
             }
             /* 序号高亮 */
             .question-number {
@@ -160,16 +227,24 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-card p-6 sm:p-8 mb-16">
+        <!-- 问题清单容器：添加questions-card类 -->
+        <div class="questions-card bg-white rounded-xl shadow-card p-6 sm:p-8 mb-16">
             <div class="text-right mb-6">
                 <p class="font-medium slogan-text">美好生活，全球交付</p>
             </div>
             
-            <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-800 mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-primary text-lg"></i>
-                <span class="body-text">问题清单（点击查看答案）</span>
-            </h2>
-            <ul id="questionsList" class="space-y-1 text-neutral-700"></ul>
+            <!-- 问题标题：添加questions-header类（顶部彩条） -->
+            <div class="questions-header">
+                <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-800 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-primary text-lg"></i>
+                    <span class="body-text">问题清单（点击查看答案）</span>
+                </h2>
+            </div>
+            
+            <!-- 问题列表：添加questions-wrapper类（层级高于背景） -->
+            <div class="questions-wrapper">
+                <ul id="questionsList" class="space-y-1 text-neutral-700"></ul>
+            </div>
         </div>
 
         <footer class="mt-8 text-center text-neutral-500 text-sm">
