@@ -44,7 +44,7 @@
                 animation: fadeIn 0.3s ease-out; 
             }
             .hover-lift {
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
             }
             .hover-lift:hover {
                 transform: translateY(-0.5px);
@@ -100,48 +100,54 @@
                 color: #374151;
             }
 
-            /* ========== 优化：清晰流光动效 ========== */
-            @keyframes sharpShimmer {
-                0% { background-position: -500px 0; }
-                100% { background-position: 500px 0; }
+            /* ========== 核心：背景常驻彩条流光（起伏+慢速） ========== */
+            /* 彩条起伏流光动画（慢速+正弦曲线起伏） */
+            @keyframes waveShimmer {
+                0% { 
+                    background-position: 0 0;
+                    transform: translateY(0);
+                }
+                50% { 
+                    background-position: 100% 0;
+                    transform: translateY(1px);
+                }
+                100% { 
+                    background-position: 0 0;
+                    transform: translateY(0);
+                }
             }
+            /* 问题项容器：常驻流光背景 */
             .question-item {
                 position: relative;
                 overflow: hidden;
-            }
-            /* 去掉模糊，改用清晰的渐变条纹 */
-            .question-item::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                /* 高对比度渐变（主色+透明），避免模糊 */
+                /* 彩条渐变（主色+浅蓝+透明，适配灰白风格） */
                 background: linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(3, 81, 157, 0.12),
-                    transparent
+                    135deg,
+                    #F8FAFC 0%,
+                    rgba(3, 81, 157, 0.02) 25%,
+                    #F8FAFC 50%,
+                    rgba(10, 120, 200, 0.02) 75%,
+                    #F8FAFC 100%
                 );
-                background-size: 300px 100%;
-                opacity: 0;
-                transition: opacity 0.2s ease;
-                pointer-events: none;
+                background-size: 400% 100%;
+                /* 常驻慢速流光（8秒一个周期，起伏变化） */
+                animation: waveShimmer 8s ease-in-out infinite;
             }
-            .question-item:hover::before {
-                opacity: 1;
-                animation: sharpShimmer 1s linear infinite;
+            /* hover/点击时仅高亮背景，无额外流光 */
+            .question-item:hover, .question-item.active {
+                background-color: rgba(3, 81, 157, 0.05);
+                /* 暂停流光？可选：取消注释则hover时暂停
+                animation-play-state: paused;
+                */
             }
-            /* 序号优化：边框高亮动效 */
+            /* 序号高亮（仅hover/点击） */
             .question-number {
-                position: relative;
                 transition: all 0.3s ease;
             }
-            .question-item:hover .question-number {
-                /* 序号边框高亮，增强识别度 */
-                box-shadow: 0 0 0 2px rgba(3, 81, 157, 0.2);
-                background-color: rgba(3, 81, 157, 0.15);
+            .question-item:hover .question-number, .question-item.active .question-number {
+                background-color: rgba(3, 81, 157, 0.2);
+                color: #03519D;
+                font-weight: 600;
             }
         }
     </style>
@@ -366,16 +372,28 @@ XX仓：
         const submitBtn = document.getElementById('submitBtn');
         const contactForm = document.getElementById('contactForm');
         const modalContent = document.getElementById('modalContent');
+        // 新增：记录当前激活的问题项
+        let activeQuestionItem = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             qaData.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = 'question-item flex items-center gap-3 p-3.5 bg-secondary rounded-lg cursor-pointer transition-all hover:bg-neutral-100 hover-lift';
+                li.className = 'question-item flex items-center gap-3 p-3.5 rounded-lg cursor-pointer hover-lift';
                 li.innerHTML = `
                     <span class="question-number w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium bg-primary/10 text-primary">${index + 1}</span>
                     <span class="question-text flex-1">${item.question}</span>
                 `;
-                li.addEventListener('click', () => showAnswer(index, item.question));
+                li.addEventListener('click', () => {
+                    // 移除上一个激活项的样式
+                    if (activeQuestionItem) {
+                        activeQuestionItem.classList.remove('active');
+                    }
+                    // 标记当前项为激活
+                    li.classList.add('active');
+                    activeQuestionItem = li;
+                    // 显示答案
+                    showAnswer(index, item.question);
+                });
                 questionsList.appendChild(li);
             });
 
@@ -446,7 +464,7 @@ XX仓：
         });
 
         closeModal.addEventListener('click', () => {
-            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.remove('scale-100', 'opacity-0');
             modalContent.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 contactModal.classList.add('hidden');
