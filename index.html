@@ -100,47 +100,32 @@
                 color: #374151;
             }
 
-            /* ========== 核心：背景常驻彩条流光（起伏+慢速） ========== */
-            /* 彩条起伏流光动画（慢速+正弦曲线起伏） */
+            /* ========== 修复：增强彩条流光可见性 ========== */
             @keyframes waveShimmer {
-                0% { 
-                    background-position: 0 0;
-                    transform: translateY(0);
-                }
-                50% { 
-                    background-position: 100% 0;
-                    transform: translateY(1px);
-                }
-                100% { 
-                    background-position: 0 0;
-                    transform: translateY(0);
-                }
+                0% { background-position: 0 0; }
+                100% { background-position: 100% 0; }
             }
-            /* 问题项容器：常驻流光背景 */
+            /* 问题项：增强彩条透明度+改用明显的渐变 */
             .question-item {
                 position: relative;
                 overflow: hidden;
-                /* 彩条渐变（主色+浅蓝+透明，适配灰白风格） */
                 background: linear-gradient(
-                    135deg,
+                    90deg,
                     #F8FAFC 0%,
-                    rgba(3, 81, 157, 0.02) 25%,
-                    #F8FAFC 50%,
-                    rgba(10, 120, 200, 0.02) 75%,
+                    rgba(3, 81, 157, 0.08) 30%,
+                    #F8FAFC 60%,
+                    rgba(10, 120, 200, 0.08) 90%,
                     #F8FAFC 100%
                 );
-                background-size: 400% 100%;
-                /* 常驻慢速流光（8秒一个周期，起伏变化） */
-                animation: waveShimmer 8s ease-in-out infinite;
+                background-size: 200% 100%;
+                /* 加快一点速度（6秒），确保能看到流动 */
+                animation: waveShimmer 6s linear infinite;
             }
-            /* hover/点击时仅高亮背景，无额外流光 */
+            /* hover/点击时高亮 */
             .question-item:hover, .question-item.active {
                 background-color: rgba(3, 81, 157, 0.05);
-                /* 暂停流光？可选：取消注释则hover时暂停
-                animation-play-state: paused;
-                */
             }
-            /* 序号高亮（仅hover/点击） */
+            /* 序号高亮 */
             .question-number {
                 transition: all 0.3s ease;
             }
@@ -372,7 +357,6 @@ XX仓：
         const submitBtn = document.getElementById('submitBtn');
         const contactForm = document.getElementById('contactForm');
         const modalContent = document.getElementById('modalContent');
-        // 新增：记录当前激活的问题项
         let activeQuestionItem = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -384,14 +368,11 @@ XX仓：
                     <span class="question-text flex-1">${item.question}</span>
                 `;
                 li.addEventListener('click', () => {
-                    // 移除上一个激活项的样式
                     if (activeQuestionItem) {
                         activeQuestionItem.classList.remove('active');
                     }
-                    // 标记当前项为激活
                     li.classList.add('active');
                     activeQuestionItem = li;
-                    // 显示答案
                     showAnswer(index, item.question);
                 });
                 questionsList.appendChild(li);
@@ -464,7 +445,7 @@ XX仓：
         });
 
         closeModal.addEventListener('click', () => {
-            modalContent.classList.remove('scale-100', 'opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
             modalContent.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 contactModal.classList.add('hidden');
