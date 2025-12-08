@@ -23,7 +23,7 @@
                             700: '#374151',
                             800: '#1F2937'
                         },
-                        // 新增彩条配色
+                        // 彩条配色
                         stripe1: '#03519D',
                         stripe2: '#0A78C8',
                         stripe3: '#1098F7'
@@ -104,20 +104,19 @@
                 color: #374151;
             }
 
-            /* ========== 核心：问题清单容器背景彩条流光 ========== */
-            /* 多色流光动画 */
-            @keyframes multiShimmer {
-                0% { background-position: -500px 0; }
-                100% { background-position: 500px 0; }
+            /* ========== 问题清单容器：彩条+慢流光 ========== */
+            /* 超慢速流光动画（20秒一圈） */
+            @keyframes slowShimmer {
+                0% { background-position: -1000px 0; }
+                100% { background-position: 1000px 0; }
             }
-            /* 问题清单容器（白色卡片） */
+            /* 问题清单容器 */
             .questions-card {
                 position: relative;
                 overflow: hidden;
-                /* 底层白色背景 */
                 background-color: white;
             }
-            /* 流光背景层 */
+            /* 背景流光层（增强透明度+加宽彩条） */
             .questions-card::before {
                 content: '';
                 position: absolute;
@@ -126,28 +125,26 @@
                 width: 100%;
                 height: 100%;
                 z-index: 0;
-                /* 多色渐变彩条（主色+浅蓝+淡蓝，低透明度） */
                 background: linear-gradient(
                     90deg,
                     transparent,
-                    rgba(3, 81, 157, 0.04),
-                    rgba(10, 120, 200, 0.06),
-                    rgba(16, 152, 247, 0.04),
+                    rgba(3, 81, 157, 0.08),
+                    rgba(10, 120, 200, 0.1),
+                    rgba(16, 152, 247, 0.08),
                     transparent
                 );
-                background-size: 500px 100%;
-                animation: multiShimmer 10s linear infinite;
+                background-size: 1000px 100%;
+                animation: slowShimmer 20s linear infinite; /* 速度减慢到20秒 */
                 pointer-events: none;
             }
-            /* 装饰彩条（顶部/底部/侧边） */
+            /* 侧边装饰彩条（增强透明度） */
             .questions-card::after {
                 content: '';
                 position: absolute;
                 top: 10px;
                 bottom: 10px;
                 left: 0;
-                width: 3px;
-                /* 竖版渐变彩条 */
+                width: 4px;
                 background: linear-gradient(
                     180deg,
                     transparent,
@@ -156,17 +153,16 @@
                     var(--stripe3),
                     transparent
                 );
-                opacity: 0.15;
-                border-radius: 3px;
+                opacity: 0.25; /* 提高透明度让彩条更明显 */
+                border-radius: 4px;
             }
-            /* 顶部装饰横条 */
+            /* 顶部装饰彩条（加宽+增强透明度） */
             .questions-header::before {
                 content: '';
                 display: block;
                 width: 100%;
-                height: 4px;
+                height: 6px;
                 margin-bottom: 1rem;
-                /* 横版渐变彩条 */
                 background: linear-gradient(
                     90deg,
                     transparent,
@@ -175,17 +171,17 @@
                     var(--stripe3),
                     transparent
                 );
-                border-radius: 4px;
-                opacity: 0.2;
+                border-radius: 6px;
+                opacity: 0.3; /* 提高透明度 */
             }
-            /* 问题行容器（层级高于背景流光） */
+            /* 问题列表层级 */
             .questions-wrapper {
                 position: relative;
                 z-index: 1;
             }
-            /* 问题行样式（简洁干净） */
+            /* 问题行样式 */
             .question-item {
-                background-color: rgba(255, 255, 255, 0.9);
+                background-color: rgba(255, 255, 255, 0.95);
                 transition: all 0.3s ease;
             }
             .question-item:hover, .question-item.active {
@@ -227,13 +223,13 @@
             </div>
         </div>
 
-        <!-- 问题清单容器：添加questions-card类 -->
+        <!-- 问题清单容器 -->
         <div class="questions-card bg-white rounded-xl shadow-card p-6 sm:p-8 mb-16">
             <div class="text-right mb-6">
                 <p class="font-medium slogan-text">美好生活，全球交付</p>
             </div>
             
-            <!-- 问题标题：添加questions-header类（顶部彩条） -->
+            <!-- 问题标题 -->
             <div class="questions-header">
                 <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-800 mb-6 flex items-center gap-2">
                     <i class="fa-solid fa-list-check text-primary text-lg"></i>
@@ -241,7 +237,7 @@
                 </h2>
             </div>
             
-            <!-- 问题列表：添加questions-wrapper类（层级高于背景） -->
+            <!-- 问题列表 -->
             <div class="questions-wrapper">
                 <ul id="questionsList" class="space-y-1 text-neutral-700"></ul>
             </div>
