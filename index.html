@@ -25,7 +25,6 @@
                         }
                     },
                     fontFamily: {
-                        // 优先微软雅黑，其次Inter，最后系统无衬线字体
                         inter: ['"Microsoft YaHei"', 'Inter', 'system-ui', 'sans-serif'],
                         'microsoft-yahei': ['"Microsoft YaHei"', 'sans-serif']
                     },
@@ -55,13 +54,11 @@
                 to { opacity: 1; transform: translateY(0); } 
             }
             .body-text { 
-                /* 强制使用微软雅黑，兜底兼容 */
                 font-family: "Microsoft YaHei", "微软雅黑", sans-serif !important;
                 font-size: 0.95rem; 
-                line-height: 1.8; /* 提高行高，阅读更舒适 */
+                line-height: 1.8; 
                 letter-spacing: 0.01em; 
             }
-            /* 联系按钮（现代横向样式） */
             .contact-btn {
                 position: fixed;
                 right: 20px;
@@ -75,7 +72,6 @@
                 transition: all 0.3s ease;
                 font-family: "Microsoft YaHei", "微软雅黑", sans-serif !important;
             }
-            /* 标语样式优化 */
             .slogan-text {
                 font-family: "Microsoft YaHei", "微软雅黑", sans-serif !important;
                 font-size: 0.9rem;
@@ -83,7 +79,6 @@
                 letter-spacing: 0.01em;
                 color: #9CA3AF;
             }
-            /* Logo默认样式，避免图片丢失显示异常 */
             .logo-placeholder {
                 background-color: #F8FAFC;
                 border-radius: 8px;
@@ -94,38 +89,27 @@
                 font-weight: 600;
                 font-family: "Microsoft YaHei", "微软雅黑", sans-serif !important;
             }
-            /* 全局字体兜底 */
             body {
                 font-family: "Microsoft YaHei", "微软雅黑", sans-serif !important;
             }
-            /* 问题文本专用样式（更小字号） */
             .question-text {
                 font-family: "Microsoft YaHei", "微软雅黑", sans-serif !important;
-                font-size: 0.85rem; /* 缩小问题字号 */
+                font-size: 0.85rem; 
                 line-height: 1.6;
                 letter-spacing: 0.01em;
                 color: #374151;
             }
 
-            /* ========== 新增：流光渐变动效 ========== */
-            /* 流光背景动画 */
-            @keyframes shimmer {
-                0% { background-position: -1000px 0; }
-                100% { background-position: 1000px 0; }
+            /* ========== 优化：清晰流光动效 ========== */
+            @keyframes sharpShimmer {
+                0% { background-position: -500px 0; }
+                100% { background-position: 500px 0; }
             }
-            /* 问题项基础样式 + 流光hover */
             .question-item {
                 position: relative;
                 overflow: hidden;
-                /* 轻量呼吸动画（默认微弱动效） */
-                animation: breathe 4s ease-in-out infinite;
             }
-            /* 呼吸动画 */
-            @keyframes breathe {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.98; transform: scale(1.005); }
-            }
-            /* 流光渐变层 */
+            /* 去掉模糊，改用清晰的渐变条纹 */
             .question-item::before {
                 content: '';
                 position: absolute;
@@ -133,57 +117,39 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
+                /* 高对比度渐变（主色+透明），避免模糊 */
                 background: linear-gradient(
                     90deg,
                     transparent,
-                    rgba(3, 81, 157, 0.05),
+                    rgba(3, 81, 157, 0.12),
                     transparent
                 );
-                background-size: 1000px 100%;
+                background-size: 300px 100%;
                 opacity: 0;
-                transition: opacity 0.3s ease;
+                transition: opacity 0.2s ease;
                 pointer-events: none;
             }
-            /* hover时显示流光 */
             .question-item:hover::before {
                 opacity: 1;
-                animation: shimmer 1.5s linear infinite;
+                animation: sharpShimmer 1s linear infinite;
             }
-            /* 序号圆形呼吸动效 */
+            /* 序号优化：边框高亮动效 */
             .question-number {
                 position: relative;
-                overflow: hidden;
+                transition: all 0.3s ease;
             }
-            .question-number::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: radial-gradient(
-                    circle,
-                    rgba(3, 81, 157, 0.15) 0%,
-                    transparent 70%
-                );
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                border-radius: 50%;
-            }
-            .question-item:hover .question-number::after {
-                opacity: 1;
-                animation: breathe 2s ease-in-out infinite;
+            .question-item:hover .question-number {
+                /* 序号边框高亮，增强识别度 */
+                box-shadow: 0 0 0 2px rgba(3, 81, 157, 0.2);
+                background-color: rgba(3, 81, 157, 0.15);
             }
         }
     </style>
 </head>
 
-<!-- 现代简约背景 -->
 <body class="bg-white min-h-screen font-inter text-neutral-800">
     <div class="container mx-auto px-4 sm:px-6 py-12 max-w-3xl">
-        <!-- 页面标题：Logo+留白优化 -->
         <header class="text-center mb-6">
-            <!-- 增加默认样式，图片不存在时显示占位符 -->
             <img 
                 src="./UPARCEL-LOGO.jpg" 
                 alt="UPARCEL-Logo" 
@@ -192,7 +158,6 @@
             >
         </header>
 
-        <!-- 答案显示区域（现代卡片风格） -->
         <div id="answerContainer" class="bg-white rounded-xl shadow-card p-6 sm:p-8 mb-8 hidden">
             <h2 class="text-xl sm:text-2xl font-semibold text-neutral-800 mb-5 flex items-center gap-2">
                 <i class="fa-solid fa-comment-dots text-primary text-lg"></i>
@@ -200,46 +165,33 @@
             </h2>
             <div class="relative">
                 <div id="answerContent" class="body-text text-neutral-700 pl-2 border-l-3 border-primary/70 p-3 rounded-r-lg"></div>
-                <!-- 附件容器（现代按钮风格） -->
-                <div id="attachmentsContainer" class="mt-4 pl-4 flex flex-wrap gap-3">
-                    <!-- 附件按钮示例 -->
-                </div>
+                <div id="attachmentsContainer" class="mt-4 pl-4 flex flex-wrap gap-3"></div>
             </div>
         </div>
 
-        <!-- 问题列表区域（现代卡片+留白） -->
         <div class="bg-white rounded-xl shadow-card p-6 sm:p-8 mb-16">
-            <!-- 右上角标语（优化样式） -->
             <div class="text-right mb-6">
                 <p class="font-medium slogan-text">美好生活，全球交付</p>
             </div>
             
-            <!-- 放大问题清单标题字号 -->
             <h2 class="text-2xl sm:text-3xl font-semibold text-neutral-800 mb-6 flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-primary text-lg"></i>
                 <span class="body-text">问题清单（点击查看答案）</span>
             </h2>
-            <!-- 核心修改：将space-y-3改为space-y-1，压缩问题行间距 -->
-            <ul id="questionsList" class="space-y-1 text-neutral-700">
-                <!-- 问题项动态生成 -->
-            </ul>
+            <ul id="questionsList" class="space-y-1 text-neutral-700"></ul>
         </div>
 
-        <!-- 页脚（极简风格） -->
         <footer class="mt-8 text-center text-neutral-500 text-sm">
             <p style="font-family: 'Microsoft YaHei', '微软雅黑', sans-serif !important;">© 2025 UPARCEL. All Rights Reserved.</p>
         </footer>
     </div>
 
-    <!-- 右侧联系按钮（现代悬浮样式） -->
     <button id="contactBtn" class="contact-btn bg-primary text-white shadow-card hover:shadow-hover hover-lift">
         <i class="fa-solid fa-headphones-simple"></i>
         <span>联系客服</span>
     </button>
 
-    <!-- 客服弹窗（现代模态框） -->
     <div id="contactModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <!-- 弹窗初始缩放+透明度样式 -->
         <div class="bg-white rounded-xl shadow-card p-6 sm:p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
             <div class="flex justify-between items-center mb-5">
                 <h3 class="text-xl sm:text-2xl font-semibold text-neutral-800 flex items-center gap-2">
@@ -251,7 +203,6 @@
                 </button>
             </div>
             
-            <!-- 成功提示 -->
             <div id="successMsg" class="hidden bg-green-50 border border-green-200 rounded-lg p-4 mb-4 answer-fade">
                 <div class="flex items-center gap-2 text-green-700">
                     <i class="fa-solid fa-check-circle text-xl"></i>
@@ -262,7 +213,6 @@
                 </div>
             </div>
             
-            <!-- 修复：闭合表单标签 + 异步提交逻辑 -->
             <form 
                 name="contact" 
                 method="POST" 
@@ -275,7 +225,6 @@
                 id="contactForm"
             >
                 <input type="hidden" name="form-name" value="contact">
-                <!-- 防机器人字段（必留） -->
                 <div class="hidden">
                     <label>不要填写：<input name="bot-field"></label>
                 </div>
@@ -300,7 +249,6 @@
     </div>
 
     <script>
-        // 问答数据（修复重复声明 + 格式优化）
         const qaData = [
             {
                 question: "合作流程是怎样的？从报价到正式发货需要多久？需要提供哪些资料？",
@@ -406,7 +354,6 @@ XX仓：
             }
         ];
 
-        // DOM元素
         const answerContainer = document.getElementById('answerContainer');
         const answerTitle = document.getElementById('answerTitle');
         const answerContent = document.getElementById('answerContent');
@@ -420,14 +367,10 @@ XX仓：
         const contactForm = document.getElementById('contactForm');
         const modalContent = document.getElementById('modalContent');
 
-        // 初始化问题列表
         document.addEventListener('DOMContentLoaded', () => {
-            // 生成问题列表
             qaData.forEach((item, index) => {
                 const li = document.createElement('li');
-                // 新增question-item类，绑定流光动效
                 li.className = 'question-item flex items-center gap-3 p-3.5 bg-secondary rounded-lg cursor-pointer transition-all hover:bg-neutral-100 hover-lift';
-                // 序号新增question-number类，绑定呼吸动效
                 li.innerHTML = `
                     <span class="question-number w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-medium bg-primary/10 text-primary">${index + 1}</span>
                     <span class="question-text flex-1">${item.question}</span>
@@ -436,16 +379,13 @@ XX仓：
                 questionsList.appendChild(li);
             });
 
-            // 核心修复：表单异步提交 + 成功提示
             contactForm.addEventListener('submit', async (e) => {
-                e.preventDefault(); // 阻止默认跳转
-                submitBtn.disabled = true; // 禁用提交按钮防重复提交
+                e.preventDefault();
+                submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span>提交中...</span><i class="fa-solid fa-spinner fa-spin"></i>';
 
                 try {
-                    // 收集表单数据
                     const formData = new FormData(contactForm);
-                    // 提交到Netlify
                     const response = await fetch('/', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -453,11 +393,8 @@ XX仓：
                     });
 
                     if (response.ok) {
-                        // 显示成功提示
                         successMsg.classList.remove('hidden');
-                        // 清空表单
                         contactForm.reset();
-                        // 5秒后隐藏成功提示
                         setTimeout(() => {
                             successMsg.classList.add('hidden');
                         }, 5000);
@@ -468,22 +405,18 @@ XX仓：
                     alert('网络错误，请检查网络后重试！');
                     console.error('表单提交失败：', error);
                 } finally {
-                    // 恢复提交按钮
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span>提交咨询</span><i class="fa-solid fa-paper-plane"></i>';
                 }
             });
         });
 
-        // 显示答案逻辑（修复换行处理，保留缩进）
         function showAnswer(index, questionText) {
             const item = qaData[index];
             answerTitle.textContent = questionText;
-            // 仅替换换行符，保留缩进空格，保证排版
             answerContent.innerHTML = item.answer.replace(/\n/g, '<br>');
             attachmentsContainer.innerHTML = '';
             
-            // 渲染附件
             if (item.attachments.length) {
                 item.attachments.forEach(attach => {
                     const a = document.createElement('a');
@@ -497,16 +430,13 @@ XX仓：
                 attachmentsContainer.innerHTML = '<p class="text-neutral-500 text-sm body-text">无附件</p>';
             }
 
-            // 显示答案容器 + 动画
             answerContainer.classList.remove('hidden');
             setTimeout(() => {
                 answerContainer.classList.add('answer-fade');
             }, 10);
-            // 滚动到答案区域
             answerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // 弹窗控制（带平滑动画）
         contactBtn.addEventListener('click', () => {
             contactModal.classList.remove('hidden');
             setTimeout(() => {
@@ -520,30 +450,28 @@ XX仓：
             modalContent.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 contactModal.classList.add('hidden');
-                successMsg.classList.add('hidden'); // 关闭弹窗时隐藏成功提示
+                successMsg.classList.add('hidden');
             }, 300);
         });
 
-        // 点击弹窗外部关闭
         contactModal.addEventListener('click', (e) => {
             if (e.target === contactModal) {
                 modalContent.classList.remove('scale-100', 'opacity-100');
                 modalContent.classList.add('scale-95', 'opacity-0');
                 setTimeout(() => {
                     contactModal.classList.add('hidden');
-                    successMsg.classList.add('hidden'); // 关闭弹窗时隐藏成功提示
+                    successMsg.classList.add('hidden');
                 }, 300);
             }
         });
 
-        // ESC键关闭弹窗
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !contactModal.classList.contains('hidden')) {
                 modalContent.classList.remove('scale-100', 'opacity-100');
                 modalContent.classList.add('scale-95', 'opacity-0');
                 setTimeout(() => {
                     contactModal.classList.add('hidden');
-                    successMsg.classList.add('hidden'); // 关闭弹窗时隐藏成功提示
+                    successMsg.classList.add('hidden');
                 }, 300);
             }
         });
