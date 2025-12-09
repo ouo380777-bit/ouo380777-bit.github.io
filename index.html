@@ -65,6 +65,9 @@
                 line-height: 1.6;
                 color: #374151;
                 font-weight: 450; /* 轻微加粗，更清晰 */
+                /* 新增：文字抗锯齿，确保清晰 */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
 
             /* ========== 彻底消除生硬线条：渐变融合+无边界过渡 ========== */
@@ -128,8 +131,8 @@
 
             /* ========== 问题项：消除模糊+提升清晰度 ========== */
             .question-item {
-                background-color: rgba(255, 255, 255, 0.98); /* 接近纯白，消除模糊 */
-                transition: all 0.2s ease;
+                background-color: white; /* 改为纯纯白，彻底消除模糊 */
+                transition: all 0.2s ease-out; /* 更快的过渡，减少延迟感 */
                 border-radius: 10px;
                 margin-bottom: 8px; /* 增加间距，避免粘连 */
                 padding: 14px 16px; /* 增大内边距，更舒展 */
@@ -137,9 +140,9 @@
                 border: 1px solid rgba(230, 247, 255, 0.5); /* 极浅边框，无生硬感 */
             }
             .question-item:hover, .question-item.active {
-                background-color: white;
-                box-shadow: 0 4px 15px rgba(230, 247, 255, 0.4);
-                transform: translateY(-0.5px);
+                background-color: white; /* 保持纯白，无颜色突变 */
+                box-shadow: 0 2px 8px rgba(230, 247, 255, 0.3); /* 更淡的阴影，无模糊 */
+                transform: translateY(-0.5px); /* 极小浮动，几乎无感 */
                 border-color: rgba(230, 247, 255, 0.8);
             }
             .question-number {
@@ -153,18 +156,20 @@
                 background-color: rgba(230, 247, 255, 0.6);
                 color: #03519D;
                 margin-right: 10px;
+                transition: all 0.2s ease-out; /* 同步快速过渡 */
             }
             .question-item:hover .question-number, .question-item.active .question-number {
                 background-color: rgba(3, 81, 157, 0.1);
+                transform: none; /* 序号不浮动，避免额外干扰 */
             }
 
             /* ========== 按钮样式 ========== */
             .hover-lift {
-                transition: all 0.2s ease;
+                transition: all 0.2s ease-out; /* 更快的过渡，减少延迟 */
             }
             .hover-lift:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 15px rgba(230, 247, 255, 0.4);
+                transform: translateY(-1px); /* 按钮浮动从2px改为1px，更轻微 */
+                box-shadow: 0 4px 10px rgba(230, 247, 255, 0.3); /* 阴影更淡 */
             }
             .contact-btn {
                 position: fixed;
@@ -545,8 +550,3 @@ XX仓：
     </script>
 </body>
 </html>
-
-
-
-
-
