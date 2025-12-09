@@ -58,19 +58,23 @@
             }
             body {
                 font-family: "Microsoft YaHei", sans-serif !important;
+                /* 新增：全局禁用文字模糊优化，避免过渡时触发 */
+                -webkit-font-smoothing: subpixel-antialiased;
+                -moz-osx-font-smoothing: auto;
             }
             .question-text {
                 font-family: "Microsoft YaHei", sans-serif !important;
-                font-size: 0.9rem; /* 放大字体，提升清晰度 */
+                font-size: 0.9rem; 
                 line-height: 1.6;
                 color: #374151;
-                font-weight: 450; /* 轻微加粗，更清晰 */
-                /* 新增：文字抗锯齿，确保清晰 */
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
+                font-weight: 450; 
+                /* 关键：强制文字清晰，禁用模糊抗锯齿 */
+                -webkit-font-smoothing: subpixel-antialiased;
+                -moz-osx-font-smoothing: auto;
+                text-shadow: 0 0 0 transparent; /* 消除过渡时的文字阴影偏移 */
             }
 
-            /* ========== 彻底消除生硬线条：渐变融合+无边界过渡 ========== */
+            /* ========== 流光层保留，仅微调模糊（如需更清晰可改8px） ========== */
             @keyframes softShimmer {
                 0% { background-position: -3000px 0; }
                 100% { background-position: 3000px 0; }
@@ -79,11 +83,12 @@
                 position: relative;
                 overflow: hidden;
                 background-color: white;
-                /* 背景渐变完全融入，无边界 */
                 background: linear-gradient(180deg, #FAFCFF 0%, white 100%);
                 border-radius: 16px;
+                /* 新增：禁用硬件加速，避免渲染分层模糊 */
+                transform: translateZ(0);
+                will-change: auto;
             }
-            /* 流光层：极浅色调+超大模糊+低透明度，消除生硬过渡 */
             .questions-card::before {
                 content: '';
                 position: absolute;
@@ -95,17 +100,19 @@
                 background: linear-gradient(
                     45deg,
                     transparent,
-                    rgba(230, 247, 255, 0.3), /* 极浅青，透明度更低 */
+                    rgba(230, 247, 255, 0.3),
                     rgba(240, 245, 255, 0.25),
                     rgba(245, 240, 255, 0.2),
                     rgba(255, 245, 247, 0.15),
                     transparent
                 );
                 background-size: 3000px 100%;
-                animation: softShimmer 40s linear infinite; /* 更慢的速度 */
+                animation: softShimmer 40s linear infinite;
                 pointer-events: none;
-                filter: blur(20px); /* 超大模糊，彻底消除边缘 */
-                opacity: 0.9;
+                filter: blur(8px); /* 降低模糊，避免穿透到子元素 */
+                opacity: 0.8; /* 降低透明度，减少叠加干扰 */
+                /* 新增：强制硬件加速，避免渲染闪烁 */
+                transform: translateZ(0);
             }
             .questions-header::before {
                 content: '';
@@ -127,23 +134,32 @@
             .questions-wrapper {
                 position: relative;
                 z-index: 1;
+                /* 新增：隔离渲染层，避免父容器模糊影响子元素 */
+                isolation: isolate;
             }
 
-            /* ========== 问题项：消除模糊+提升清晰度 ========== */
+            /* ========== 问题项：彻底消除过渡模糊 ========== */
             .question-item {
-                background-color: white; /* 改为纯纯白，彻底消除模糊 */
-                transition: all 0.2s ease-out; /* 更快的过渡，减少延迟感 */
+                background-color: white; /* 纯静态白，无任何透明 */
                 border-radius: 10px;
-                margin-bottom: 8px; /* 增加间距，避免粘连 */
-                padding: 14px 16px; /* 增大内边距，更舒展 */
+                margin-bottom: 8px;
+                padding: 14px 16px;
                 cursor: pointer;
-                border: 1px solid rgba(230, 247, 255, 0.5); /* 极浅边框，无生硬感 */
+                border: 1px solid rgba(230, 247, 255, 0.5);
+                /* 核心修改：仅过渡必要属性，禁用transform（根源） */
+                transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+                /* 禁用硬件加速，避免过渡时的渲染模糊 */
+                transform: none;
+                will-change: border-color, box-shadow;
+                /* 隔离渲染，避免父容器流光层干扰 */
+                isolation: isolate;
             }
             .question-item:hover, .question-item.active {
-                background-color: white; /* 保持纯白，无颜色突变 */
-                box-shadow: 0 2px 8px rgba(230, 247, 255, 0.3); /* 更淡的阴影，无模糊 */
-                transform: translateY(-0.5px); /* 极小浮动，几乎无感 */
+                background-color: white; /* 完全不变，避免背景过渡 */
+                box-shadow: 0 2px 8px rgba(230, 247, 255, 0.3);
                 border-color: rgba(230, 247, 255, 0.8);
+                /* 彻底删除transform，消除浮动导致的模糊 */
+                transform: none;
             }
             .question-number {
                 width: 24px;
@@ -156,20 +172,23 @@
                 background-color: rgba(230, 247, 255, 0.6);
                 color: #03519D;
                 margin-right: 10px;
-                transition: all 0.2s ease-out; /* 同步快速过渡 */
+                /* 仅过渡背景色，无其他变化 */
+                transition: background-color 0.2s ease-out;
+                transform: none;
             }
             .question-item:hover .question-number, .question-item.active .question-number {
                 background-color: rgba(3, 81, 157, 0.1);
-                transform: none; /* 序号不浮动，避免额外干扰 */
             }
 
-            /* ========== 按钮样式 ========== */
+            /* ========== 按钮样式：同步消除过渡模糊 ========== */
             .hover-lift {
-                transition: all 0.2s ease-out; /* 更快的过渡，减少延迟 */
+                transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+                transform: none; /* 禁用按钮浮动 */
             }
             .hover-lift:hover {
-                transform: translateY(-1px); /* 按钮浮动从2px改为1px，更轻微 */
-                box-shadow: 0 4px 10px rgba(230, 247, 255, 0.3); /* 阴影更淡 */
+                box-shadow: 0 4px 10px rgba(230, 247, 255, 0.3);
+                transform: none; /* 彻底删除浮动 */
+                border-color: rgba(230, 247, 255, 1);
             }
             .contact-btn {
                 position: fixed;
@@ -186,6 +205,7 @@
                 background: linear-gradient(45deg, #E6F7FF, #F0F5FF);
                 color: #03519D;
                 border: 1px solid rgba(230, 247, 255, 0.8);
+                transform: none;
             }
             .submit-btn {
                 padding: 12px 20px;
