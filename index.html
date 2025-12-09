@@ -138,7 +138,7 @@
                 isolation: isolate;
             }
 
-            /* ========== 问题项：彻底消除过渡模糊 ========== */
+            /* ========== 问题项：彻底消除过渡模糊 + 强制阴影生效 ========== */
             .question-item {
                 background-color: white; /* 纯静态白，无任何透明 */
                 border-radius: 10px;
@@ -155,11 +155,11 @@
                 isolation: isolate;
             }
             .question-item:hover, .question-item.active {
-                background-color: white; /* 完全不变，避免背景过渡 */
-                box-shadow: 0 4px 12px rgba(230, 247, 255, 0.5);
-                border-color: rgba(230, 247, 255, 0.8);
+                background-color: white !important; /* 完全不变，避免背景过渡 */
+                box-shadow: 0 4.5px 12px rgba(230, 247, 255, 0.5) !important;
+                border-color: rgba(230, 247, 255, 0.8) !important;
                 /* 彻底删除transform，消除浮动导致的模糊 */
-                transform: none;
+                transform: none !important;
             }
             .question-number {
                 width: 24px;
@@ -455,7 +455,8 @@ XX仓：
         document.addEventListener('DOMContentLoaded', () => {
             qaData.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.className = 'question-item hover-lift flex items-center';
+                // 关键修复：删除 hover-lift 类，避免样式覆盖
+                li.className = 'question-item flex items-center';
                 li.innerHTML = `
                     <span class="question-number">${index + 1}</span>
                     <span class="question-text flex-1">${item.question}</span>
@@ -570,5 +571,3 @@ XX仓：
     </script>
 </body>
 </html>
-
-
