@@ -23,12 +23,12 @@
                             700: '#374151',
                             800: '#1F2937'
                         },
-                        // 升级彩条配色：增加渐变层次+高饱和辅助色
-                        stripe1: '#03519D',
-                        stripe2: '#0A78C8',
-                        stripe3: '#1098F7',
-                        stripe4: '#40B5FF',
-                        stripe5: '#80D0FF'
+                        // 多色渐变配色（蓝+紫+青+浅粉）
+                        stripe1: '#03519D',   // 深蓝
+                        stripe2: '#6366F1',   // 紫蓝
+                        stripe3: '#06B6D4',   // 青蓝
+                        stripe4: '#F472B6',   // 浅粉紫
+                        stripe5: '#22D3EE'    // 亮青
                     },
                     fontFamily: {
                         inter: ['"Microsoft YaHei"', 'Inter', 'system-ui', 'sans-serif'],
@@ -106,14 +106,8 @@
                 color: #374151;
             }
 
-            /* ========== 核心升级：绚丽斜向流光（多层渐变+双动画叠加） ========== */
-            /* 主斜向流光动画（15秒，快速层） */
-            @keyframes mainShimmer {
-                0% { background-position: -1500px 0; }
-                100% { background-position: 1500px 0; }
-            }
-            /* 辅助柔光动画（30秒，慢速层，营造光晕效果） */
-            @keyframes softShimmer {
+            /* ========== 多色斜向流光（45度） ========== */
+            @keyframes slowShimmer {
                 0% { background-position: -1000px 0; }
                 100% { background-position: 1000px 0; }
             }
@@ -122,10 +116,8 @@
                 position: relative;
                 overflow: hidden;
                 background-color: white;
-                /* 增加轻微内发光，提升质感 */
-                box-shadow: 0 0 25px rgba(16, 152, 247, 0.05) inset;
             }
-            /* 主流光层：多层渐变+高饱和色彩+斜向45度 */
+            /* 多色背景流光层（蓝+紫+青+浅粉渐变） */
             .questions-card::before {
                 content: '';
                 position: absolute;
@@ -135,41 +127,22 @@
                 height: 100%;
                 z-index: 0;
                 background: linear-gradient(
-                    45deg,
+                    45deg, /* 斜向45度 */
                     transparent,
-                    rgba(3, 81, 157, 0.1),
-                    rgba(10, 120, 200, 0.15),
-                    rgba(16, 152, 247, 0.2),
-                    rgba(64, 181, 255, 0.15),
-                    rgba(128, 208, 255, 0.1),
-                    transparent
-                );
-                background-size: 1500px 100%;
-                animation: mainShimmer 15s linear infinite;
-                pointer-events: none;
-            }
-            /* 辅助柔光层：低饱和大渐变+慢动画，叠加出绚丽层次感 */
-            .questions-card::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 0;
-                background: linear-gradient(
-                    45deg,
-                    transparent,
-                    rgba(16, 152, 247, 0.05),
-                    rgba(64, 181, 255, 0.08),
+                    rgba(3, 81, 157, 0.07),    /* 深蓝 */
+                    rgba(99, 102, 241, 0.09),   /* 紫蓝 */
+                    rgba(6, 182, 212, 0.1),     /* 青蓝 */
+                    rgba(244, 114, 182, 0.08),  /* 浅粉紫 */
+                    rgba(34, 211, 238, 0.07),   /* 亮青 */
                     transparent
                 );
                 background-size: 1000px 100%;
-                animation: softShimmer 30s linear infinite;
+                animation: slowShimmer 20s linear infinite;
                 pointer-events: none;
             }
-            /* 侧边装饰条：升级为彩色渐变+光泽效果 */
-            .questions-card .side-decoration {
+            /* 侧边多色装饰条（竖向渐变） */
+            .questions-card::after {
+                content: '';
                 position: absolute;
                 top: 10px;
                 bottom: 10px;
@@ -185,66 +158,52 @@
                     var(--stripe5),
                     transparent
                 );
-                opacity: 0.4;
+                opacity: 0.28;
                 border-radius: 4px;
-                /* 光泽动效 */
-                box-shadow: 0 0 10px rgba(16, 152, 247, 0.3);
-                z-index: 1;
             }
-            /* 顶部装饰条：升级为宽幅彩虹渐变+动态光泽 */
+            /* 顶部多色装饰条（斜向45度） */
             .questions-header::before {
                 content: '';
                 display: block;
                 width: 100%;
-                height: 8px;
+                height: 6px;
                 margin-bottom: 1rem;
                 background: linear-gradient(
                     45deg,
+                    transparent,
                     var(--stripe1),
                     var(--stripe2),
                     var(--stripe3),
                     var(--stripe4),
                     var(--stripe5),
-                    var(--stripe3),
-                    var(--stripe2),
-                    var(--stripe1)
+                    transparent
                 );
-                border-radius: 8px;
-                opacity: 0.4;
-                /* 光泽动效 */
-                background-size: 200% 100%;
-                animation: headerGlow 10s ease-in-out infinite alternate;
-            }
-            @keyframes headerGlow {
-                0% { background-position: 0 0; opacity: 0.3; }
-                100% { background-position: 100% 0; opacity: 0.5; }
+                border-radius: 6px;
+                opacity: 0.32;
             }
             /* 问题列表层级 */
             .questions-wrapper {
                 position: relative;
-                z-index: 2;
+                z-index: 1;
             }
-            /* 问题行样式：升级hover动效 */
+            /* 问题行样式 */
             .question-item {
                 background-color: rgba(255, 255, 255, 0.95);
                 transition: all 0.3s ease;
-                border: 1px solid rgba(16, 152, 247, 0.05);
             }
             .question-item:hover, .question-item.active {
                 background-color: rgba(255, 255, 255, 1);
-                box-shadow: 0 4px 15px rgba(16, 152, 247, 0.12);
-                border-color: rgba(16, 152, 247, 0.15);
-                transform: translateY(-1px);
+                box-shadow: 0 2px 10px rgba(3, 81, 157, 0.08);
             }
-            /* 序号高亮：升级渐变背景 */
+            /* 序号高亮（多色渐变背景） */
             .question-number {
                 transition: all 0.3s ease;
             }
             .question-item:hover .question-number, .question-item.active .question-number {
-                background: linear-gradient(45deg, var(--stripe1), var(--stripe3));
+                background: linear-gradient(45deg, #03519D, #6366F1, #06B6D4);
                 color: white;
                 font-weight: 600;
-                box-shadow: 0 0 8px rgba(16, 152, 247, 0.3);
+                box-shadow: 0 0 6px rgba(99, 102, 241, 0.2);
             }
         }
     </style>
@@ -257,11 +216,11 @@
                 src="./UPARCEL-LOGO.jpg" 
                 alt="UPARCEL-Logo" 
                 class="w-[clamp(12rem,40vw,20rem)] mx-auto mb-0 block logo-placeholder"
-                onerror="this.textContent='UPARCEL'; this.style.height='120px'; this.style.background='linear-gradient(45deg, #03519D, #1098F7, #40B5FF)'; this.style.color='white';"
+                onerror="this.textContent='UPARCEL'; this.style.height='120px'; this.style.background='linear-gradient(45deg, #03519D, #6366F1, #06B6D4)'; this.style.color='white';"
             >
         </header>
 
-        <div id="answerContainer" class="bg-white rounded-xl shadow-card p-6 sm:p-8 mb-8 hidden border border-neutral-100">
+        <div id="answerContainer" class="bg-white rounded-xl shadow-card p-6 sm:p-8 mb-8 hidden">
             <h2 class="text-xl sm:text-2xl font-semibold text-neutral-800 mb-5 flex items-center gap-2">
                 <i class="fa-solid fa-comment-dots text-primary text-lg"></i>
                 <span id="answerTitle" class="body-text">点击问题查看答案</span>
@@ -272,9 +231,8 @@
             </div>
         </div>
 
-        <!-- 问题清单容器：增加侧边装饰节点 -->
+        <!-- 问题清单容器 -->
         <div class="questions-card bg-white rounded-xl shadow-card p-6 sm:p-8 mb-16">
-            <div class="side-decoration"></div>
             <div class="text-right mb-6">
                 <p class="font-medium slogan-text">美好生活，全球交付</p>
             </div>
@@ -298,7 +256,8 @@
         </footer>
     </div>
 
-    <button id="contactBtn" class="contact-btn bg-primary text-white shadow-card hover:shadow-hover hover-lift hover:bg-gradient-to-r from-stripe1 to-stripe3 hover:shadow-lg">
+    <!-- 多色渐变客服按钮 -->
+    <button id="contactBtn" class="contact-btn bg-gradient-to-r from-stripe1 to-stripe3 text-white shadow-card hover:shadow-hover hover-lift hover:from-stripe2 hover:to-stripe5">
         <i class="fa-solid fa-headphones-simple"></i>
         <span>联系客服</span>
     </button>
@@ -342,17 +301,18 @@
                 </div>
                 <div>
                     <label class="block text-sm text-neutral-600 mb-1.5 body-text">您的姓名 *</label>
-                    <input type="text" name="name" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all outline-none body-text" required>
+                    <input type="text" name="name" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-stripe2/30 focus:border-stripe2 transition-all outline-none body-text" required>
                 </div>
                 <div>
                     <label class="block text-sm text-neutral-600 mb-1.5 body-text">您的邮箱 *</label>
-                    <input type="email" name="email" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all outline-none body-text" required>
+                    <input type="email" name="email" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-stripe2/30 focus:border-stripe2 transition-all outline-none body-text" required>
                 </div>
                 <div>
                     <label class="block text-sm text-neutral-600 mb-1.5 body-text">咨询内容 *</label>
-                    <textarea name="message" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all outline-none body-text" rows="4" required></textarea>
+                    <textarea name="message" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-stripe2/30 focus:border-stripe2 transition-all outline-none body-text" rows="4" required></textarea>
                 </div>
-                <button type="submit" id="submitBtn" class="w-full bg-primary text-white px-4 py-2.5 rounded-lg hover:bg-gradient-to-r from-stripe1 to-stripe3 transition-all flex items-center justify-center gap-2 hover-lift body-text">
+                <!-- 多色渐变提交按钮 -->
+                <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-stripe1 to-stripe3 text-white px-4 py-2.5 rounded-lg hover:from-stripe2 hover:to-stripe5 transition-all flex items-center justify-center gap-2 hover-lift body-text">
                     <span>提交咨询</span>
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
