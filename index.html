@@ -155,13 +155,13 @@
 
 <body class="bg-white min-h-screen font-inter text-gray-800">
     <div class="container mx-auto px-4 sm:px-6 py-12 max-w-3xl">
-        <!-- Logo区域（恢复图片+容错） -->
+        <!-- Logo区域（修复乱码+缩小尺寸） -->
         <header class="text-center mb-6">
             <img 
-                src="./UPARCEL-LOGO.jpg"  <!-- 本地LOGO路径，可替换为在线链接 -->
+                src="./UPARCEL-LOGO.jpg"  <!-- 替换为你的LOGO路径 -->
                 alt="UPARCEL-Logo" 
-                class="w-[clamp(12rem,40vw,20rem)] mx-auto mb-0 block rounded-lg"
-                onerror="this.textContent='UPARCEL'; this.style.height='120px'; this.style.background='linear-gradient(45deg, #E6F7FF, #F0F5FF)'; this.style.color='#03519D'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontWeight='600';"
+                class="w-[clamp(8rem,30vw,12rem)] h-auto mx-auto mb-0 block rounded-lg object-contain"
+                onerror="this.textContent='UPARCEL'; this.style.height='80px'; this.style.width='clamp(8rem,30vw,12rem)'; this.style.background='linear-gradient(45deg, #E6F7FF, #F0F5FF)'; this.style.color='#03519D'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontWeight='600'; this.style.borderRadius='8px';"
             >
         </header>
 
@@ -265,7 +265,7 @@
     </div>
 
     <script>
-        // FAQ数据（精简换行，保留核心内容）
+        // FAQ数据
         const qaData = [
             {
                 question: "合作流程是怎样的？从报价到正式发货需要多久？需要提供哪些资料？",
