@@ -155,11 +155,14 @@
 
 <body class="bg-white min-h-screen font-inter text-gray-800">
     <div class="container mx-auto px-4 sm:px-6 py-12 max-w-3xl">
-        <!-- Logo区域 -->
+        <!-- Logo区域（恢复图片+容错） -->
         <header class="text-center mb-6">
-            <div class="w-[clamp(12rem,40vw,20rem)] mx-auto h-30 flex items-center justify-center rounded-lg bg-gray-50 text-primary font-semibold">
-                UPARCEL
-            </div>
+            <img 
+                src="./UPARCEL-LOGO.jpg"  <!-- 本地LOGO路径，可替换为在线链接 -->
+                alt="UPARCEL-Logo" 
+                class="w-[clamp(12rem,40vw,20rem)] mx-auto mb-0 block rounded-lg"
+                onerror="this.textContent='UPARCEL'; this.style.height='120px'; this.style.background='linear-gradient(45deg, #E6F7FF, #F0F5FF)'; this.style.color='#03519D'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.fontWeight='600';"
+            >
         </header>
 
         <!-- 答案展示区 -->
