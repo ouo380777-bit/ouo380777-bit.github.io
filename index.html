@@ -73,7 +73,6 @@
                 filter: blur(4px);
                 opacity: 1;
                 transform: translateZ(0);
-                display: none;
             }
             @keyframes shimmer {
                 0% { background-position: -3000px 0; }
@@ -155,8 +154,10 @@
             }
 
             .logo-container {
-                width: 300px;
-                height: 160px;
+                max-width: 300px;
+                width: 100%;
+                height: auto;
+                min-height: 80px; /* 图片加载失败时，容器至少有80px高度，不会塌陷 */
                 margin: 0 auto;
                 border-radius: 8px;
                 display: flex;
@@ -457,5 +458,6 @@
     </script>
 </body>
 </html>
+
 
 
