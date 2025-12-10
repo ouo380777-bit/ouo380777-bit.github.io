@@ -81,17 +81,17 @@
             
             /* 问题项样式 */
             .question-item {
-    background: white;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    padding: 14px 16px;
-    cursor: pointer;
-    border: 1px solid rgba(230,247,255,0.5);
-    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
-    isolation: isolate;
-    position: relative; /* 新增：固定层级 */
-    z-index: 1; /* 新增：确保容器在最上层 */
-    user-select: none; /* 可选：防止文字选中干扰hover */
+    /* 原有样式保留，新增以下2行 */
+    cursor: pointer !important; /* 强制整个容器可点击 */
+    pointer-events: auto !important; /* 确保hover事件不被拦截 */
+}
+/* 新增：强制子元素不拦截hover事件，全部传递给父容器 */
+.question-item * {
+    pointer-events: none; 
+}
+/* 仅序号保留交互（可选） */
+.question-item .question-number {
+    pointer-events: auto; 
 }
             .question-item:hover, .question-item.active {
                 background-color: white !important; /* 强制背景色 */
@@ -462,6 +462,7 @@
     </script>
 </body>
 </html>
+
 
 
 
