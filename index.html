@@ -49,6 +49,9 @@
                 color: #374151;
                 -webkit-font-smoothing: subpixel-antialiased;
                 text-shadow: 0 0 0 transparent;
+        flex: 1; /* 文字占满剩余空间 */
+    word-wrap: break-word; /* 自动换行 */
+    white-space: normal;
             }
             .slogan-text { @apply base-text text-sm text-gray-500; }
             
@@ -80,10 +83,25 @@
             }
             
             /* 问题项样式 */
-            .question-item {
-    /* 原有样式保留，新增以下2行 */
-    cursor: pointer !important; /* 强制整个容器可点击 */
-    pointer-events: auto !important; /* 确保hover事件不被拦截 */
+.question-item {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border: 1px solid rgba(230,247,255,0.5);
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+    isolation: isolate;
+    position: relative; 
+    z-index: 1; 
+    user-select: none; 
+    /* 新增hover穿透修复 */
+    cursor: pointer !important; 
+    pointer-events: auto !important; 
+    /* 新增排版对齐 */
+    display: flex;
+    align-items: center; /* 序号和文字垂直居中 */
+    gap: 10px; /* 序号和文字间距固定 */
 }
 /* 新增：强制子元素不拦截hover事件，全部传递给父容器 */
 .question-item * {
@@ -92,6 +110,18 @@
 /* 仅序号保留交互（可选） */
 .question-item .question-number {
     pointer-events: auto; 
+    /* 序号排版加固（避免变形） */
+    flex-shrink: 0; /* 序号宽度不被压缩 */
+    width: 24px; 
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    font-size: 13px;
+    background: rgba(230,247,255,0.6);
+    color: #03519D;
+    margin-right: 0; /* 用gap替代margin，避免重复间距 */
 }
             .question-item:hover, .question-item.active {
                 background-color: white !important; /* 强制背景色 */
@@ -462,6 +492,7 @@
     </script>
 </body>
 </html>
+
 
 
 
