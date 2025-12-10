@@ -81,19 +81,22 @@
             
             /* 问题项样式 */
             .question-item {
-                background: white;
-                border-radius: 10px;
-                margin-bottom: 8px;
-                padding: 14px 16px;
-                cursor: pointer;
-                border: 1px solid rgba(230,247,255,0.5);
-                transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
-                isolation: isolate;
-            }
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border: 1px solid rgba(230,247,255,0.5);
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+    isolation: isolate;
+    position: relative; /* 新增：固定层级 */
+    z-index: 1; /* 新增：确保容器在最上层 */
+    user-select: none; /* 可选：防止文字选中干扰hover */
+}
             .question-item:hover, .question-item.active {
                 background-color: white !important; /* 强制背景色 */
-                box-shadow: 0 4.5px 12px rgba(230, 247, 255, 0.5) !important; /* 强制阴影 */
-                border-color: rgba(230, 247, 255, 0.8) !important; /* 强制边框色 */
+    box-shadow: 0 4.5px 12px rgba(230,247,255,0.5) !important;
+    border-color: rgba(230,247,255,0.8) !important;
                 transform: none !important; /* 强制无位移 */
 }
             .question-number {
@@ -108,8 +111,8 @@
                 transition: background-color 0.2s ease-out;
             }
             .question-item:hover .question-number {
-                background: rgba(3,81,157,0.1);
-            }
+    background: rgba(3,81,157,0.1) !important;
+}
             
             /* 按钮通用样式 */
             .hover-lift {
@@ -459,6 +462,7 @@
     </script>
 </body>
 </html>
+
 
 
 
