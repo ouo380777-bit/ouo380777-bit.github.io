@@ -29,6 +29,15 @@
     
     <style type="text/tailwindcss">
         @layer utilities {
+            /* 基础文本样式（统一抽离） */
+            .base-text {
+                font-family: "Microsoft YaHei", sans-serif !important;
+                font-size: 0.95rem; 
+                line-height: 1.8; 
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
             /* 答案淡入动画 */
             .answer-fade { animation: fadeIn 0.3s ease-out; }
             @keyframes fadeIn { 
@@ -36,31 +45,29 @@
                 to { opacity: 1; transform: translateY(0); } 
             }
 
-/* 替换原有的 .base-text 或 #answerContent 样式 */
-#answerContent {
-    /* 保留原有样式 */
-    font-family: "Microsoft YaHei", sans-serif !important;
-    font-size: 0.95rem; 
-    line-height: 1.8; 
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    
-    /* 新增：让每个换行变成独立段落，自动空两格 */
-    white-space: pre-line; /* 保留换行，合并多余空格 */
-    text-indent: 2em; /* 首行空两格 */
-    /* 可选：段间距更明显 */
-    margin-bottom: 8px;
-}
+            /* 核心修复：答案每段空两格 + 换行分段 */
+            #answerContent {
+                @apply base-text text-gray-700 pl-2 border-l-3 border-stripe1/80 p-3 rounded-r-lg;
+                /* 关键样式：让每个<br>分隔的内容都作为独立段落，且首行空两格 */
+                white-space: pre-line; /* 保留换行符/<br>的换行效果 */
+                text-indent: 2em;      /* 首行空两格 */
+                position: relative;
+            }
+            /* 给每个<br>后的新段落自动补空两格（伪元素方案） */
+            #answerContent br {
+                display: block;
+                content: "";
+                margin: 8px 0; /* 段间距，增强层次感 */
+                text-indent: 2em; /* 强制换行后也空两格 */
+            }
+            /* 兼容多段首行空两格 */
+            #answerContent > span,
+            #answerContent > div {
+                display: block;
+                text-indent: 2em;
+                margin-bottom: 8px;
+            }
 
-/* 关键：给每个换行后的新段落自动空两格（用伪元素实现） */
-#answerContent::first-line {
-    text-indent: 2em;
-}
-#answerContent br {
-    display: block;
-    content: "";
-    margin-bottom: 8px; /* 换行后的段间距 */
-}
             .question-text { 
                 @apply base-text;
                 font-size: 0.9rem;
@@ -243,7 +250,7 @@
                 <span id="answerTitle" class="base-text">点击问题查看答案</span>
             </h2>
             <div class="relative">
-                <div id="answerContent" class="base-text text-gray-700 pl-2 border-l-3 border-stripe1/80 p-3 rounded-r-lg"></div>
+                <div id="answerContent"></div>
                 <div id="attachmentsContainer" class="mt-4 pl-4 flex flex-wrap gap-3"></div>
             </div>
         </div>
@@ -513,5 +520,3 @@
     </script>
 </body>
 </html>
-
-
