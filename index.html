@@ -29,15 +29,6 @@
     
     <style type="text/tailwindcss">
         @layer utilities {
-            /* 基础文本样式 */
-            .base-text {
-                font-family: "Microsoft YaHei", sans-serif !important;
-                font-size: 0.95rem; 
-                line-height: 1.8; 
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-            }
-
             /* 答案淡入动画 */
             .answer-fade { animation: fadeIn 0.3s ease-out; }
             @keyframes fadeIn { 
@@ -45,25 +36,27 @@
                 to { opacity: 1; transform: translateY(0); } 
             }
 
-            /* 答案区域仅保留基础样式（去掉所有空两格/分段样式） */
-            #answerContent {
-                @apply base-text text-gray-700 pl-2 border-l-3 border-stripe1/80 p-3 rounded-r-lg;
-                /* 仅保留默认换行，不做任何额外处理 */
+            /* 基础文字样式 */
+            .base-text { 
+                font-family: "Microsoft YaHei", sans-serif !important;
+                font-size: 0.95rem; 
+                line-height: 1.8; 
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
-            
             .question-text { 
                 @apply base-text;
                 font-size: 0.9rem;
                 line-height: 1.6;
                 color: #374151;
                 text-shadow: 0 0 0 transparent;
-                flex: 1; 
-                word-wrap: break-word; 
+                flex: 1; /* 文字占满剩余空间 */
+                word-wrap: break-word; /* 自动换行 */
                 white-space: normal;
             }
             .slogan-text { @apply base-text text-sm text-gray-500; }
             
-            /* 流光背景卡片 */
+            /* 流光背景卡片（优化层级和动效速度） */
             .shimmer-card {
                 position: absolute;
                 top: 0;
@@ -91,8 +84,8 @@
                     transparent
                 );
                 background-size: 3000px 100%;
-                animation: shimmer 25s linear infinite;
-                filter: blur(6px);
+                animation: shimmer 25s linear infinite; /* 加快动效速度，更明显 */
+                filter: blur(6px); /* 增加模糊，视觉更柔和 */
                 opacity: 0.8;
             }
             @keyframes shimmer {
@@ -100,29 +93,31 @@
                 100% { background-position: 3000px 0; }
             }
             
-            /* 问题项样式 */
+            /* 问题项样式（整合hover+排版，移除重复定义） */
             .question-item {
                 background: white;
                 border-radius: 10px;
                 margin-bottom: 8px;
                 padding: 14px 16px;
                 cursor: pointer;
-                border: 1px solid #f0f0f0;
-                transition: all 0.2s ease-out;
+                border: 1px solid #f0f0f0; /* 浅灰边框，更整洁 */
+                transition: all 0.2s ease-out; /* 过渡更丝滑 */
                 display: flex;
                 align-items: center;
                 gap: 10px;
                 position: relative;
                 z-index: 1;
                 user-select: none;
-                pointer-events: auto !important;
+                pointer-events: auto !important; /* 强制hover事件不被拦截 */
             }
+            /* 强制子元素不拦截hover事件，全部传递给父容器 */
             .question-item * {
                 pointer-events: none; 
             }
+            /* 序号样式（仅保留一份，排版加固） */
             .question-item .question-number {
                 pointer-events: auto; 
-                flex-shrink: 0;
+                flex-shrink: 0; /* 序号宽度不被压缩 */
                 width: 24px; 
                 height: 24px;
                 border-radius: 50%;
@@ -130,17 +125,19 @@
                 align-items: center; 
                 justify-content: center;
                 font-size: 13px;
-                background: #e6f7ff;
+                background: #e6f7ff; /* 浅蓝底，和灰色阴影搭配更协调 */
                 color: #03519D;
-                margin-right: 0;
+                margin-right: 0; /* 用gap替代margin，避免重复间距 */
                 transition: all 0.2s ease-out;
             }
+            /* hover/激活状态 */
             .question-item:hover, .question-item.active {
-                background-color: #fafafa !important;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-                border-color: #e8e8e8 !important;
+                background-color: #fafafa !important; /* 浅灰背景 */
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important; /* 浅灰色阴影 */
+                border-color: #e8e8e8 !important; /* 灰色边框 */
                 transform: translateY(0) !important;
             }
+            /* 序号hover同步变色 */
             .question-item:hover .question-number, .question-item.active .question-number {
                 background: #d1eaff !important; 
                 color: #024080 !important;
@@ -178,7 +175,7 @@
                 @apply base-text;
             }
             
-            /* 头部分割线 */
+            /* 头部分割线（修复CSS变量问题） */
             .header-line::before {
                 content: '';
                 display: block;
@@ -193,7 +190,7 @@
                 max-width: 300px;
                 width: 100%;
                 height: auto;
-                min-height: 80px;
+                min-height: 80px; /* 图片加载失败时防塌陷 */
                 margin: 0 auto;
                 border-radius: 8px;
                 display: flex;
@@ -207,7 +204,7 @@
             .logo-img {
                 width: 100%;
                 height: 100%;
-                object-fit: contain;
+                object-fit: contain; /* 保持图片比例 */
             }
         }
     </style>
@@ -229,17 +226,17 @@
                 <span id="answerTitle" class="base-text">点击问题查看答案</span>
             </h2>
             <div class="relative">
-                <div id="answerContent"></div>
+                <div id="answerContent" class="base-text text-gray-700 pl-2 border-l-3 border-stripe1/80 p-3 rounded-r-lg"></div>
                 <div id="attachmentsContainer" class="mt-4 pl-4 flex flex-wrap gap-3"></div>
             </div>
         </div>
 
-        <!-- 问题卡片区 -->
+        <!-- 问题卡片区（修复：渐变背景+流光动效叠加） -->
         <div class="bg-gradient-to-r from-stripe3/50 via-stripe2/50 to-stripe1/50 p-6 sm:p-8 mb-16 rounded-xl relative overflow-hidden">
-            <!-- 流光动效层 -->
+            <!-- 流光动效层（独立层级，不遮挡内容） -->
             <div class="shimmer-card"></div>
             
-            <!-- 内容层 -->
+            <!-- 内容层（z-10 确保文字/列表在最上层） -->
             <div class="relative z-10">
                 <div class="text-right mb-6">
                     <p class="slogan-text font-medium">美好生活，全球交付</p>
@@ -332,7 +329,7 @@
         const qaData = [
             {
                 question: "合作流程是怎样的？从报价到正式发货需要多久？需要提供哪些资料？",
-                answer: "您好，我们的合作流程简洁高效，全程最快对接当天即可完成：<br>1.资料提交：请填写我们的开户信息资料表，我们会尽快给您开通专属的oms账号。<br>2.合同与结算确认：我们收到资料后，会立即提供合同，同步确认结算方式、币种等细则，这一步可与系统对接并行推进。<br>3.系统对接与测试：我们为您提供 TMS/WMS 系统操作培训，您可在我们oms系统测试下单和进行api对接，确认操作流畅。<br>4.正式发货：测试没有问题之后，即可批量正式发货，后续按约定结算周期对账即可，多退少补。",
+                answer: "您好，我们的合作流程简洁高效，全程最快对接当天即可完成：<br>1.资料提交：请填写我们的开户信息资料表，我们会尽快给您开通专属的oms账号。<br>2.合同与结算确认：我们收到资料后，会立即提供合同，同步确认结算方式（预充值 / 账期）、币种等细则，这一步可与系统对接并行推进。<br>3.系统对接与测试：我们为您提供 TMS/WMS 系统操作培训，您可在我们oms系统测试下单和进行api对接，确认操作流畅。<br>4.正式发货：测试没有问题之后，即可批量正式发货，后续按约定结算周期对账即可，多退少补。",
                 attachments: [{ name: "客户开户及联系登记表2025.xls", url: "./attachments/customer_registration_2025.xls" }]
             },
             {
@@ -352,7 +349,7 @@
             },
             {
                 question: "有没有货物运输的延误赔付政策？什么情况下可以申请延误索赔？",
-                answer: "从行业规则来看，常规跨境物流中，物流商一般不设置通用的延误赔付条款，毕竟运输过程中会遇到海关查验、当地天气 、当地公共假期、尾程快递爆仓等诸多不可抗或不可控因素，这类情况均不在赔付范畴内。<br>但是作为代理方，我们始终将您的物流时效体验放在首位。若出现非客观因素导致的异常延误（如物流方操作失误），我们会优先为您向物流方发起申诉和协商，同时启动备用方案加快派送；即便无官方赔付，我们也会通过后续合作的优惠或增值服务，为您弥补相应损失。",
+                answer: "从行业规则来看，常规跨境物流中，物流商一般不设置通用的延误赔付条款，毕竟运输过程中会遇到海关查验、当地天气 、当地公共假期、尾程快递爆仓等诸多不可抗或不可控因素，这类情况均不在赔付范畴内。但是作为代理方，我们始终将您的物流时效体验放在首位。若出现非客观因素导致的异常延误（如物流方操作失误），我们会优先为您向物流方发起申诉和协商，同时启动备用方案加快派送；即便无官方赔付，我们也会通过后续合作的优惠或增值服务，为您弥补相应损失。",
                 attachments: []
             },
             {
@@ -367,7 +364,7 @@
             },
             {
                 question: "合作需要什么门槛？有没有货量要求？",
-                answer: "合作方需具备合法有效的营业执照等营业资质，且需开通对公结算账户，用于后续合同签订及资金往来结算，确保合作合规性。<br>无强制单量门槛，但因对公资金转账会产生手续费，从降低合作成本的角度，建议您有稳定单量需求后再开启正式批量发货。前期对接阶段，我们会提供小额的测试额度。如果不发货的话在规定期限及时取消即可。如果确认正式走货，包裹产生上网轨迹后我们会按照约定的结算周期进行出账，多退少补，订单金额调整明细可以在【打单系统】-【订单明细】-【费用变动记录】里面查看。",
+                answer: "合作方需具备合法有效的营业执照等营业资质，且需开通对公结算账户，用于后续合同签订及资金往来结算，确保合作合规性。无强制单量门槛，但因对公资金转账会产生手续费，从降低合作成本的角度，建议您有稳定单量需求后再开启正式批量发货。前期对接阶段，我们会提供小额的测试额度。如果不发货的话在规定期限及时取消即可。如果确认正式走货，包裹产生上网轨迹后我们会按照约定的结算周期进行出账，多退少补，订单金额调整明细可以在【打单系统】-【订单明细】-【费用变动记录】里面查看。",
                 attachments: []
             },
             {
@@ -387,7 +384,7 @@
             },
             {
                 question: "客户专属日报包含哪些内容？多久发送一次？可以自定义监控维度吗？",
-                answer: "客户专属日报包含核心物流数据：当日发货量、签收量、异常订单数（丢失/延误/破损）、海外仓库存周转率、结算金额预估等。<br>日报默认每日18:00发送至您指定的邮箱/企业微信，周/月会同步生成汇总版。支持自定义监控维度，您可根据需求添加“目的国时效分布”“渠道赔付率”“库存预警”等维度，我们会按需调整日报模板。",
+                answer: "客户专属日报包含核心物流数据：当日发货量、签收量、异常订单数（丢失/延误/破损）、海外仓库存周转率、结算金额预估等；日报默认每日18:00发送至您指定的邮箱/企业微信，周/月会同步生成汇总版。支持自定义监控维度，您可根据需求添加“目的国时效分布”“渠道赔付率”“库存预警”等维度，我们会按需调整日报模板。",
                 attachments: []
             }
         ];
@@ -453,7 +450,7 @@
         function showAnswer(index, questionText) {
             const item = qaData[index];
             answerTitle.textContent = questionText;
-            answerContent.innerHTML = item.answer; // 直接渲染，仅<br>生效换行
+            answerContent.innerHTML = item.answer;
             attachmentsContainer.innerHTML = '';
             
             if (item.attachments.length) {
