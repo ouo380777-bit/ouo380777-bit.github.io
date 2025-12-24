@@ -215,7 +215,8 @@
         <!-- Logo区域 -->
         <header class="text-center mb-6">
             <div class="logo-container">
-                <img src="./UPARCEL-LOGO.jpg" alt="UPARCEL-Logo" class="logo-img">
+<img src="https://cdn.example.com/UPARCEL-LOGO.jpg" alt="UPARCEL-Logo" class="logo-img" 
+         onerror="this.src='https://via.placeholder.com/300x80?text=UPARCEL'">
             </div>
         </header>
 
@@ -396,7 +397,7 @@
                 question: "海外仓索赔标准是什么？我们需要提供什么材料？",
                 answer: "针对一件代发业务，海外仓相关赔付标准及规则如下，需要您提供商品申报海关的采购发票：<br>不承担赔付的情形：若仓库已完成预扫描操作，但包裹最终未实现物流上网，该情况仓库不承担任何赔付责任。<br>可申请赔付的情形及标准：若仓库未进行预扫描操作，且包裹同时未完成物流上网，将按0.5% 未上网容错率判定赔付范围。<br>容错率核算逻辑：未上网容错率 = 当月未出库扫描且未上网订单条数 ÷ 当月总发货单量，该数值≤0.5% 时，不启动赔付；超出容错率的部分，由我司按货物海关申报价值进行赔偿。<br>举个例子：若你当月在我司共发 1000 单，按 0.5% 容错率计算，允许有 5 单（1000×0.5%）未出库扫描且未上网，该 5 单不赔付；若此类订单超过 5 单（如 8 单），则仅对超出的 3 单进行赔付，赔付金额以货物海关申报价值为准。<br>赔付核算与结算时效：当月产生的符合赔付条件的未上网订单，我司会在次月 15 日统一完成金额核算，并与客户确认最终赔付金额，后续按约定流程完成赔付。",
                 attachments: []
-            }
+            },
         ];
 
         // 核心DOM变量
@@ -506,4 +507,5 @@
     </script>
 </body>
 </html>
+
 
