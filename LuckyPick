@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机选择器 | heaven's mini tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B9D',
+                        secondary: '#F8FAFC',
+                        neutral: '#F3F4F6'
+                    },
+                    fontFamily: {
+                        comic: ['Comic Neue', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 8px rgba(0,0,0,0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .result-fade { animation: fadeIn 0.3s ease-out; }
+            .copy-toast { animation: toastFade 2s ease-in-out; }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(6px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes toastFade { 
+                0% { opacity: 0; transform: translateY(10px); }
+                20% { opacity: 1; transform: translateY(0); }
+                80% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(10px); }
+            }
+            
+.brand-title {
+    font-family: 'Comic Neue', sans-serif;
+    font-weight: 900;
+    color: #FF6B9D;
+    letter-spacing: 0.1em;
+    /* 关键：多层阴影模拟软边效果 */
+    text-shadow: 
+        1px 1px 0 #fff, 
+        -1px -1px 0 #fff, 
+        1px -1px 0 #fff, 
+        -1px 1px 0 #fff,
+        0 0 6px rgba(255, 107, 157, 0.3);
+    /* 描边加粗，让字更圆润饱满 */
+    -webkit-text-stroke: 0.6px rgba(255, 107, 157, 0.9);
+    paint-order: stroke fill;
+}
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-inter min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+        <!-- 品牌标题 -->
+        <header class="text-center mb-8">
+            <h1 class="brand-title text-[clamp(2rem,6vw,2.8rem)]">随机选择器</h1>
+            <p class="text-gray-500 text-sm md:text-base mt-1">输入你的选项，点击按钮，让系统帮你随机决定吧～</p>
+        </header>
+
+        <!-- 主功能卡片 -->
+        <div class="bg-white rounded-lg shadow-soft p-6 space-y-6">
+            <!-- 输入区域 -->
+            <div>
+                <label class="text-sm text-gray-600 mb-2 block">请输入选项（每行一个）</label>
+                <textarea 
+                    id="optionsInput" 
+                    class="w-full h-32 p-3 border border-gray-200 rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none transition-all"
+                    placeholder="例如：
+吃饭
+逛街
+看电影
+"></textarea>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="flex justify-center">
+                <button id="randomBtn" class="px-6 py-3 bg-primary text-white rounded-md flex items-center gap-2 hover:bg-primary/90 active:scale-95 transition-all">
+                    <i class="fa fa-magic"></i>
+                    随机抽取
+                </button>
+            </div>
+
+            <!-- 结果展示区 -->
+            <div class="pt-4 border-t border-gray-100">
+                <p class="text-center text-sm text-gray-500 mb-3">随机结果</p>
+                <div id="resultBox" class="bg-neutral rounded-md min-h-[70px] flex items-center justify-center text-center text-gray-700 text-lg p-4 result-fade">
+                    点击上方按钮开始
+                </div>
+            </div>
+        </div>
+
+        <!-- 复制成功提示 -->
+        <div id="copyToast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-md text-sm opacity-0 copy-toast z-50 hidden">
+            <i class="fa fa-check-circle mr-2"></i>
+            <span id="toastText">复制成功</span>
+        </div>
+
+        <footer class="mt-10 text-center text-gray-400 text-xs">
+            <p>© 2025 HEAVEN. </p>
+        </footer>
+    </div>
+
+    <script>
+        const optionsInput = document.getElementById('optionsInput');
+        const randomBtn = document.getElementById('randomBtn');
+        const resultBox = document.getElementById('resultBox');
+        const copyToast = document.getElementById('copyToast');
+        const toastText = document.getElementById('toastText');
+
+        // 显示提示
+        function showToast(msg) {
+            toastText.textContent = msg;
+            copyToast.classList.remove('hidden');
+            copyToast.style.opacity = '1';
+            setTimeout(() => {
+                copyToast.style.opacity = '0';
+                setTimeout(() => copyToast.classList.add('hidden'), 2000);
+            }, 2000);
+        }
+
+        // 随机选择
+        randomBtn.addEventListener('click', () => {
+            let text = optionsInput.value.trim();
+            if (!text) {
+                showToast('请先输入选项');
+                return;
+            }
+
+            let list = text.split('\n')
+                .map(item => item.trim())
+                .filter(item => item !== '');
+
+            if (list.length === 0) {
+                showToast('未检测到有效选项');
+                return;
+            }
+
+            let random = list[Math.floor(Math.random() * list.length)];
+            
+            // 动画重刷
+            resultBox.classList.remove('result-fade');
+            void resultBox.offsetWidth;
+            resultBox.classList.add('result-fade');
+            resultBox.textContent = random;
+        });
+    </script>
+</body>
+</html>
