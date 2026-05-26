@@ -51,14 +51,12 @@
     font-weight: 900;
     color: #FF6B9D;
     letter-spacing: 0.1em;
-    /* 关键：多层阴影模拟软边效果 */
     text-shadow: 
         1px 1px 0 #fff, 
         -1px -1px 0 #fff, 
         1px -1px 0 #fff, 
         -1px 1px 0 #fff,
         0 0 6px rgba(255, 107, 157, 0.3);
-    /* 描边加粗，让字更圆润饱满 */
     -webkit-text-stroke: 0.6px rgba(255, 107, 157, 0.9);
     paint-order: stroke fill;
 }
@@ -68,15 +66,12 @@
 
 <body class="bg-gray-50 font-inter min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-2xl">
-        <!-- 品牌标题 -->
         <header class="text-center mb-8">
             <h1 class="brand-title text-[clamp(2rem,6vw,2.8rem)]">随机选择器</h1>
             <p class="text-gray-500 text-sm md:text-base mt-1">输入你的选项，点击按钮，让系统帮你随机决定吧～</p>
         </header>
 
-        <!-- 主功能卡片 -->
         <div class="bg-white rounded-lg shadow-soft p-6 space-y-6">
-            <!-- 输入区域 -->
             <div>
                 <label class="text-sm text-gray-600 mb-2 block">请输入选项（每行一个）</label>
                 <textarea 
@@ -89,7 +84,6 @@
 "></textarea>
             </div>
 
-            <!-- 操作按钮 -->
             <div class="flex justify-center">
                 <button id="randomBtn" class="px-6 py-3 bg-primary text-white rounded-md flex items-center gap-2 hover:bg-primary/90 active:scale-95 transition-all">
                     <i class="fa fa-magic"></i>
@@ -97,7 +91,6 @@
                 </button>
             </div>
 
-            <!-- 结果展示区 -->
             <div class="pt-4 border-t border-gray-100">
                 <p class="text-center text-sm text-gray-500 mb-3">随机结果</p>
                 <div id="resultBox" class="bg-neutral rounded-md min-h-[70px] flex items-center justify-center text-center text-gray-700 text-lg p-4 result-fade">
@@ -106,14 +99,13 @@
             </div>
         </div>
 
-        <!-- 复制成功提示 -->
         <div id="copyToast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-md text-sm opacity-0 copy-toast z-50 hidden">
             <i class="fa fa-check-circle mr-2"></i>
             <span id="toastText">复制成功</span>
         </div>
 
         <footer class="mt-10 text-center text-gray-400 text-xs">
-            <p>© 2026 HEAVEN. </p>
+            <p>© 2025 HEAVEN. </p>
         </footer>
     </div>
 
@@ -123,6 +115,9 @@
         const resultBox = document.getElementById('resultBox');
         const copyToast = document.getElementById('copyToast');
         const toastText = document.getElementById('toastText');
+
+        // 不重复随机核心变量
+        let remainingOptions = [];
 
         // 显示提示
         function showToast(msg) {
@@ -135,7 +130,7 @@
             }, 2000);
         }
 
-        // 随机选择
+        // 随机抽取（不重复）
         randomBtn.addEventListener('click', () => {
             let text = optionsInput.value.trim();
             if (!text) {
@@ -152,13 +147,23 @@
                 return;
             }
 
-            let random = list[Math.floor(Math.random() * list.length)];
-            
-            // 动画重刷
+            // 如果剩余列表为空，重新初始化
+            if (remainingOptions.length === 0) {
+                remainingOptions = [...list];
+            }
+
+            // 随机抽取一个
+            let randomIndex = Math.floor(Math.random() * remainingOptions.length);
+            let selected = remainingOptions[randomIndex];
+
+            // 从剩余列表删除，确保不重复
+            remainingOptions.splice(randomIndex, 1);
+
+            // 动画刷新
             resultBox.classList.remove('result-fade');
             void resultBox.offsetWidth;
             resultBox.classList.add('result-fade');
-            resultBox.textContent = random;
+            resultBox.textContent = selected;
         });
     </script>
 </body>
